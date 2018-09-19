@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.service;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class FitpoloNotificationCollectorService extends NotificationListenerService {

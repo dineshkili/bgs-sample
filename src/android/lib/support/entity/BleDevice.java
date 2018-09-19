@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.entity;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import java.io.Serializable;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @Date 2017/5/14 0014
  * @Author wenzheng.liu
  * @Description 蓝牙设备
- * @ClassPath com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.BleDevice
+ * @ClassPath com.aiotlabs.ifitpro.plugin.bluetooth.BleDevice
  */
 public class BleDevice implements Serializable, Comparable<BleDevice> {
 

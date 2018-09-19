@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.service;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.app.ActivityManager;
 import android.app.Service;
@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
 
 import java.util.List;
 

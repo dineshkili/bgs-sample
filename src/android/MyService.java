@@ -1,7 +1,11 @@
-package com.red_folder.phonegap.plugin.backgroundservice.sample;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +13,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.red_folder.phonegap.plugin.backgroundservice.BackgroundService;
+
 
 public class MyService extends BackgroundService {
 	

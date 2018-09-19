@@ -1,9 +1,9 @@
- package com.aiotlabs.ifitpro.plugin.bluetooth.support.utils;
+ package com.aiotlabs.ifitpro.plugin.bluetooth;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.DailySleep;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.DailyStep;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.HeartRate;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DailySleep;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DailyStep;
+import com.aiotlabs.ifitpro.plugin.bluetooth.HeartRate;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;

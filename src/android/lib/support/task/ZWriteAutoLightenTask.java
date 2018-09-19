@@ -1,12 +1,12 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.task;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoConstants;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoSupport;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoOrderTaskCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.AutoLighten;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderType;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.utils.DigitalConver;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConstants;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.AutoLighten;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderEnum;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderType;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DigitalConver;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

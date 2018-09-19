@@ -32,29 +32,26 @@
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
   
-            <service android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MyService">
+            <service android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MokoService">
                 <intent-filter>         
-                    <action android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MyService"/> 
+                    <action android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MokoService"/> 
                 </intent-filter>     
             </service>
             
         </config-file>
 
-        <!-- <framework custom="true" src="src/android/ifitprobt-sdk.gradle" type="gradleReference" /> -->
+        <framework custom="true" src="src/android/ifitprobt-plugin.gradle" type="gradleReference" />
 
+        <!-- <source-file src="src/android/MyService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />  -->
 
-        <source-file src="src/android/MyService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" /> 
-        <!-- <source-file src="src/android/lib/service/MokoService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" /> -->
-
-        <!-- <source-file src="src/android/IFitProBtPlugin.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" /> -->
-        <!-- <source-file src="src/android/lib/service/FitpoloNotificationCollectorMonitorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
-        <source-file src="src/android/lib/service/FitpoloNotificationCollectorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/service/MokoService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+
+        <source-file src="src/android/lib/service/FitpoloNotificationCollectorMonitorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/service/FitpoloNotificationCollectorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/utils/FileUtils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/utils/Utils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/AppConstants.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/BaseApplication.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
-
         <source-file src="src/android/lib/support/callback/MokoConnStateCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/support/callback/MokoOrderTaskCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/support/callback/MokoResponseCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
@@ -128,7 +125,7 @@
         <source-file src="src/android/lib/support/utils/DigitalConver.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/support/utils/MokoUtils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/support/MokoConstants.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
-        <source-file src="src/android/lib/support/MokoSupport.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/> -->
+        <source-file src="src/android/lib/support/MokoSupport.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
 
     </platform>
 	

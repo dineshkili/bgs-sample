@@ -1,4 +1,4 @@
- package com.aiotlabs.ifitpro.plugin.bluetooth.support.utils;
+ package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
@@ -8,14 +8,16 @@ import android.bluetooth.BluetoothGattCallback;
 import android.content.Context;
 import android.os.Build;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
+
+
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
+
 
 public class BleConnectionCompat {
 

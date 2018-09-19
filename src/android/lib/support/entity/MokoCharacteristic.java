@@ -1,8 +1,8 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.entity;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.utils.MokoUtils;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoUtils;
 
 import java.io.Serializable;
 

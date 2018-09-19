@@ -1,11 +1,11 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.task;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoSupport;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoOrderTaskCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderTaskResponse;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderType;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderEnum;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderTaskResponse;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderType;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
 
 /**
  * @Date 2017/5/11

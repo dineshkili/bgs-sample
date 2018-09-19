@@ -1,11 +1,6 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.callback;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
-/**
- * @Date 2017/5/10
- * @Author wenzheng.liu
- * @Description 前端展示连接回调
- * @ClassPath com.aiotlabs.ifitpro.plugin.bluetooth.MokoConnStateCallback
- */
+
 public interface MokoConnStateCallback {
     /**
      * @Date 2017/5/10

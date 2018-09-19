@@ -1,4 +1,4 @@
-package  com.aiotlabs.ifitpro.plugin.bluetooth.support.handler;
+package  com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.os.Handler;
 import android.os.Looper;

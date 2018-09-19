@@ -1,19 +1,19 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.task;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoConstants;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoSupport;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoOrderTaskCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.NotifyEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderType;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.utils.DigitalConver;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConstants;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.NotifyEnum;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderEnum;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderType;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DigitalConver;
 
 /**
  * @Date 2017/5/11
  * @Author wenzheng.liu
  * @Description 设置通知
- * @ClassPath com.aiotlabs.ifitpro.plugin.bluetooth.support.task.ZWriteNotifyTask
+ * @ClassPath com.aiotlabs.ifitpro.plugin.bluetooth.ZWriteNotifyTask
  */
 public class ZWriteNotifyTask extends OrderTask {
 

@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.log;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.content.Context;
 import android.os.Environment;

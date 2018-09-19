@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.handler;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
@@ -6,10 +6,10 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothProfile;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoSupport;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoResponseCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.utils.DigitalConver;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoResponseCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DigitalConver;
 
 /**
  * @Date 2017/5/10

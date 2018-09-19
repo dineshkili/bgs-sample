@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.entity;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import java.util.List;
 

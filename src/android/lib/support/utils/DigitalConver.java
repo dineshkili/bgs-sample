@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.utils;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 /**
  * @Date 2017/5/15

@@ -1,5 +1,18 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.service;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.util.Log;
+
+import com.red_folder.phonegap.plugin.backgroundservice.BackgroundService;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,23 +21,184 @@ import android.os.IBinder;
 import android.os.Message;
 
 import com.aiotlabs.ifitpro.plugin.bluetooth.AppConstants;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoConstants;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoSupport;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoConnStateCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoOrderTaskCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderTaskResponse;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.handler.BaseMessageHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConstants;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConnStateCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderTaskResponse;
+import com.aiotlabs.ifitpro.plugin.bluetooth.BaseMessageHandler;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
 
-/**
- * @Date 2017/5/17
- * @Author wenzheng.liu
- * @Description
- * @ClassPath com.aiotlabs.ifitpro.plugin.bluetooth.service.MokoService
- */
-public class MokoService extends Service implements MokoConnStateCallback, MokoOrderTaskCallback {
+
+public class MokoService extends BackgroundService implements MokoScanDeviceCallback, MokoConnStateCallback, MokoOrderTaskCallback {
+    
+
+    private final static String TAG = MokoService.class.getSimpleName();
+
+    private HashMap<String, BleDevice> deviceMap;
+
+    
+    private String mHelloTo = "World";
+    JSONObject scanState = new JSONObject();    
+    JSONObject connectionState = new JSONObject();
+    JSONObject orderResult = new JSONObject();
+
+
+
+    /* ********************************************************************************** 
+     * Background Service Segment (Redfolder Plugin)
+     * ***********************************************************************************/
+
+	@Override
+	protected JSONObject doWork() {
+        
+        // try {
+			
+		// 	scanState.put("Message", msg);
+
+		// 	Log.d(TAG, msg);
+		// } catch (JSONException e) {
+		// }
+		
+        // return result;	
+        
+		JSONObject result = new JSONObject();
+		
+		try {
+			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"); 
+			String now = df.format(new Date(System.currentTimeMillis())); 
+
+			String msg = "Hello " + this.mHelloTo + " - its currently " + now;
+			result.put("Message", msg);
+
+			Log.d(TAG, msg);
+		} catch (JSONException e) {
+		}
+		
+		return result;	
+	}
+
+	@Override
+	protected JSONObject getConfig() {
+		JSONObject result = new JSONObject();
+		
+		try {
+			result.put("HelloTo", this.mHelloTo);
+		} catch (JSONException e) {
+		}
+		
+		return result;
+	}
+
+	@Override
+	protected void setConfig(JSONObject config) {
+        JSONObject result = new JSONObject();
+		try {
+			if (config.has("search")){
+                searchDevices();
+                result.put("action", "Searching");
+            }
+        } 
+        catch (JSONException e) {
+		}
+		
+	}     
+
+	@Override
+	protected JSONObject initialiseLatestResult() {
+		deviceMap = new HashMap<>();    
+		return null;
+	}
+
+	@Override
+	protected void onTimerEnabled() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onTimerDisabled() {
+		// TODO Auto-generated method stub
+		
+    }
+    
+
+
+
+
+
+
+    
+
+    /* ********************************************************************************** 
+     * METHODS Implementation
+     * ***********************************************************************************/
+
+    public void searchDevices() {
+        MokoSupport.getInstance().startScanDevice(this);
+    }
+
+
+    public void connectBluetoothDevice(String address) {
+        MokoSupport.getInstance().connDevice(this, address, this);
+    }
+
+    public void disConnectBle() {
+        MokoSupport.getInstance().setReconnectCount(0);
+        MokoSupport.getInstance().disConnectBle();
+    }
+
+    public boolean isSyncData() {
+        return MokoSupport.getInstance().isSyncData();
+    }
+
+
+
+
+
+    /* ********************************************************************************** 
+     * Scan Device Segment
+     * ***********************************************************************************/
+
+    /* >> Interface Implmentation: MokoScanDeviceCallback */
+
+
+    @Override
+    public void onStartScan() {
+        deviceMap.clear();
+        // mDialog.setMessage("Scanning...");
+        // mDialog.show();
+    }
+
+    @Override
+    public void onScanDevice(BleDevice device) {
+        deviceMap.put(device.address, device);
+        // mDatas.clear();
+        // mDatas.addAll(deviceMap.values());
+        // mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onStopScan() {
+        // if (!MainActivity.this.isFinishing() && mDialog.isShowing()) {
+        //     mDialog.dismiss();
+        // }
+        // mDatas.clear();
+        // mDatas.addAll(deviceMap.values());
+        // mAdapter.notifyDataSetChanged();
+    }
+
+
+
+    /* ********************************************************************************** 
+     * MokoService Segment
+     * ***********************************************************************************/
+
+    /* >> Interface Implmentation: MokoConnStateCallback */
+    
     @Override
     public void onConnectSuccess() {
+
         Intent intent = new Intent(MokoConstants.ACTION_DISCOVER_SUCCESS);
         sendOrderedBroadcast(intent, null);
     }
@@ -41,6 +215,10 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
         intent.putExtra(AppConstants.EXTRA_CONN_COUNT, reConnCount);
         sendBroadcast(intent);
     }
+
+
+    /* >> Interface Implmentation: MokoOrderTaskCallback */
+
 
     @Override
     public void onOrderResult(OrderTaskResponse response) {
@@ -62,32 +240,13 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
         sendBroadcast(new Intent(MokoConstants.ACTION_ORDER_FINISH));
     }
 
+    
+    /* >> Service Entry Point */
+
     @Override
     public void onCreate() {
         LogModule.i("创建MokoService...onCreate");
         super.onCreate();
-    }
-
-    public void connectBluetoothDevice(String address) {
-        MokoSupport.getInstance().connDevice(this, address, this);
-    }
-
-    /**
-     * @Date 2017/5/23
-     * @Author wenzheng.liu
-     * @Description 断开手环
-     */
-    public void disConnectBle() {
-        MokoSupport.getInstance().setReconnectCount(0);
-        MokoSupport.getInstance().disConnectBle();
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
-    public boolean isSyncData() {
-        return MokoSupport.getInstance().isSyncData();
     }
 
     @Override

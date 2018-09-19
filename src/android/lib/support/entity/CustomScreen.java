@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.entity;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 public class CustomScreen {
     public boolean duration;

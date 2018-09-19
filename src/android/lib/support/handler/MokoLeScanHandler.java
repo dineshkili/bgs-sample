@@ -1,12 +1,12 @@
-package  com.aiotlabs.ifitpro.plugin.bluetooth.support.handler;
+package  com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoScanDeviceCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.BleDevice;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.utils.DigitalConver;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoScanDeviceCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.BleDevice;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DigitalConver;
 
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
 import no.nordicsemi.android.support.v18.scanner.ScanResult;

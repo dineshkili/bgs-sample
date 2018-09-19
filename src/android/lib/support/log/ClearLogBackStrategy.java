@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.log;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import com.elvishew.xlog.printer.file.backup.BackupStrategy;
 

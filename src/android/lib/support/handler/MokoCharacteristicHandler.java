@@ -1,14 +1,14 @@
-package  com.aiotlabs.ifitpro.plugin.bluetooth.support.handler;
+package  com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.text.TextUtils;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoSupport;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.MokoCharacteristic;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderType;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoCharacteristic;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderType;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
 
 import java.util.HashMap;
 import java.util.List;

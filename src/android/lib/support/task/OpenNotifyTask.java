@@ -1,8 +1,8 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.task;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoOrderTaskCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderType;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderEnum;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderType;
 
 
 public class OpenNotifyTask extends OrderTask {

@@ -2,7 +2,7 @@ package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.app.Application;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoSupport;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
 
 /**
  * @Date 2017/5/11

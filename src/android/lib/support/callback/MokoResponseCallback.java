@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.callback;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
  * @Date 2017/12/12 0012
  * @Author wenzheng.liu
  * @Description
- * @ClassPath com.moko.support.callback.MokoResponseCallback
+ * @ClassPath com.moko.MokoResponseCallback
  */
 public interface MokoResponseCallback {
 

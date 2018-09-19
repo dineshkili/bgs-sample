@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -14,37 +14,37 @@ import android.os.Message;
 import android.os.ParcelUuid;
 import android.text.TextUtils;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoConnStateCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoOrderTaskCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoResponseCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoScanDeviceCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.AutoLighten;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.BandAlarm;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.BleDevice;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.CustomScreen;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.DailySleep;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.DailyStep;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.DeviceTypeEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.FirmwareEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.FirmwareParams;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.HeartRate;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.MokoCharacteristic;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.NoDisturb;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderType;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.SitAlert;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.UserInfo;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.handler.MokoCharacteristicHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.handler.MokoConnStateHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.handler.MokoLeScanHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.log.LogModule;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.task.OpenNotifyTask;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.task.OrderTask;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.task.ZReadSleepGeneralTask;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.utils.BaseHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.utils.BleConnectionCompat;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.utils.ComplexDataParse;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.utils.DigitalConver;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConnStateCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoResponseCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoScanDeviceCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.AutoLighten;
+import com.aiotlabs.ifitpro.plugin.bluetooth.BandAlarm;
+import com.aiotlabs.ifitpro.plugin.bluetooth.BleDevice;
+import com.aiotlabs.ifitpro.plugin.bluetooth.CustomScreen;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DailySleep;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DailyStep;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DeviceTypeEnum;
+import com.aiotlabs.ifitpro.plugin.bluetooth.FirmwareEnum;
+import com.aiotlabs.ifitpro.plugin.bluetooth.FirmwareParams;
+import com.aiotlabs.ifitpro.plugin.bluetooth.HeartRate;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoCharacteristic;
+import com.aiotlabs.ifitpro.plugin.bluetooth.NoDisturb;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderEnum;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderType;
+import com.aiotlabs.ifitpro.plugin.bluetooth.SitAlert;
+import com.aiotlabs.ifitpro.plugin.bluetooth.UserInfo;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoCharacteristicHandler;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConnStateHandler;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoLeScanHandler;
+import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OpenNotifyTask;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderTask;
+import com.aiotlabs.ifitpro.plugin.bluetooth.ZReadSleepGeneralTask;
+import com.aiotlabs.ifitpro.plugin.bluetooth.BaseHandler;
+import com.aiotlabs.ifitpro.plugin.bluetooth.BleConnectionCompat;
+import com.aiotlabs.ifitpro.plugin.bluetooth.ComplexDataParse;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DigitalConver;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ import no.nordicsemi.android.support.v18.scanner.ScanSettings;
  * @Date 2017/5/10
  * @Author wenzheng.liu
  * @Description 蓝牙工具类
- * @ClassPath com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoSupport
+ * @ClassPath com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport
  */
 public class MokoSupport implements MokoResponseCallback {
     public static final int HANDLER_MESSAGE_WHAT_CONNECTED = 1;

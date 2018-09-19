@@ -1,9 +1,9 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.support.task;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.MokoConstants;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.callback.MokoOrderTaskCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.support.entity.OrderType;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConstants;
+import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderEnum;
+import com.aiotlabs.ifitpro.plugin.bluetooth.OrderType;
 
 import java.util.Calendar;
 
