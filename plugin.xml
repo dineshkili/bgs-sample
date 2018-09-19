@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        id="com.red_folder.phonegap.plugin.backgroundservice.sample"
+        id="com.aiotlabs.ifitpro.plugin.bluetooth"
         version="2.0.0">
 
     <engines>
@@ -32,9 +32,9 @@
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
   
-            <service android:name="com.red_folder.phonegap.plugin.backgroundservice.sample.MyService">
+            <service android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MokoService">
                 <intent-filter>         
-                    <action android:name="com.red_folder.phonegap.plugin.backgroundservice.sample.MyService"/> 
+                    <action android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MokoService"/> 
                 </intent-filter>     
             </service>
             
@@ -43,91 +43,91 @@
         <framework custom="true" src="src/android/ifitprobt-sdk.gradle" type="gradleReference" />
 
         
-        <source-file src="src/android/MyService.java" target-dir="src/com/red_folder/phonegap/plugin/backgroundservice/sample" />
+        <source-file src="src/android/lib/service/MokoService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
 
         <!-- <source-file src="src/android/IFitProBtPlugin.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" /> -->
-        <source-file src="src/android/lib/service/FitpoloNotificationCollectorMonitorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/service" />
-        <source-file src="src/android/lib/service/FitpoloNotificationCollectorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/service" />
-        <source-file src="src/android/lib/service/MokoService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/service" />
-        <source-file src="src/android/lib/utils/FileUtils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/utils" />
-        <source-file src="src/android/lib/utils/Utils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/utils" />
+        <source-file src="src/android/lib/service/FitpoloNotificationCollectorMonitorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/service/FitpoloNotificationCollectorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/service/MokoService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/utils/FileUtils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/utils/Utils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/AppConstants.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/BaseApplication.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
 
-        <source-file src="src/android/lib/support/callback/MokoConnStateCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/callback" />
-        <source-file src="src/android/lib/support/callback/MokoOrderTaskCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/callback" />
-        <source-file src="src/android/lib/support/callback/MokoResponseCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/callbackk" />
-        <source-file src="src/android/lib/support/callback/MokoScanDeviceCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/callback"/>
-        <source-file src="src/android/lib/support/entity/AutoLighten.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/BandAlarm.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/BleDevice.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/CustomScreen.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/DailySleep.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/DailyStep.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/DeviceTypeEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/FirmwareEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/FirmwareParams.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/HeartRate.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/MokoCharacteristic.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/NoDisturb.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/NotificationTypeEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/NotifyEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/OrderEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/OrderTaskResponse.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/OrderType.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/SitAlert.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/entity/UserInfo.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/entity" />
-        <source-file src="src/android/lib/support/handler/BaseMessageHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/handler" />
-        <source-file src="src/android/lib/support/handler/MokoCharacteristicHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/handler" />
-        <source-file src="src/android/lib/support/handler/MokoConnStateHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/handler" />
-        <source-file src="src/android/lib/support/handler/MokoLeScanHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/handler" />
-        <source-file src="src/android/lib/support/log/ClearLogBackStrategy.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/log" />
-        <source-file src="src/android/lib/support/log/LogModule.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/log" />
-        <source-file src="src/android/lib/support/task/OpenNotifyTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/OrderTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZOpenStepListenerTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadAlarmsTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadAutoLightenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadBatteryTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadCustomScreenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadDialTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadHeartRateIntervalTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadHeartRateTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadLastChargeTimeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadLastScreenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadNoDisturbTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadParamsTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadSitAlertTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadSleepDetailTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadSleepGeneralTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadStepTargetTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadStepTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadTimeFormatTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadUnitTypeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadUserInfoTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZReadVersionTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteAlarmsTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteAutoLightenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteCustomScreenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteDialTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteHeartRateIntervalTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteLastScreenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteNoDisturbTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteNotifyTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteShakeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteSitAlertTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteStepTargetTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteSystemTimeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteTimeFormatTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteUnitTypeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/task/ZWriteUserInfoTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/task" />
-        <source-file src="src/android/lib/support/utils/BaseHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/utils" />
-        <source-file src="src/android/lib/support/utils/BleConnectionCompat.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/utils" />
-        <source-file src="src/android/lib/support/utils/ComplexDataParse.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/utils" />
-        <source-file src="src/android/lib/support/utils/DigitalConver.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/utils" />
-        <source-file src="src/android/lib/support/utils/MokoUtils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support/utils" />
-        <source-file src="src/android/lib/support/MokoConstants.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support" />
-        <source-file src="src/android/lib/support/MokoSupport.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth/support"/>
+        <source-file src="src/android/lib/support/callback/MokoConnStateCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/callback/MokoOrderTaskCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/callback/MokoResponseCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/callback/MokoScanDeviceCallback.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
+        <source-file src="src/android/lib/support/entity/AutoLighten.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/BandAlarm.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/BleDevice.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/CustomScreen.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/DailySleep.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/DailyStep.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/DeviceTypeEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/FirmwareEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/FirmwareParams.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/HeartRate.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/MokoCharacteristic.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/NoDisturb.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/NotificationTypeEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/NotifyEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/OrderEnum.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/OrderTaskResponse.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/OrderType.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/SitAlert.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/entity/UserInfo.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/handler/BaseMessageHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/handler/MokoCharacteristicHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/handler/MokoConnStateHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/handler/MokoLeScanHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/log/ClearLogBackStrategy.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/log/LogModule.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/OpenNotifyTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/OrderTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZOpenStepListenerTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadAlarmsTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadAutoLightenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadBatteryTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadCustomScreenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadDialTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadHeartRateIntervalTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadHeartRateTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadLastChargeTimeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadLastScreenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadNoDisturbTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadParamsTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadSitAlertTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadSleepDetailTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadSleepGeneralTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadStepTargetTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadStepTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadTimeFormatTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadUnitTypeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadUserInfoTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZReadVersionTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteAlarmsTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteAutoLightenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteCustomScreenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteDialTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteHeartRateIntervalTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteLastScreenTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteNoDisturbTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteNotifyTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteShakeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteSitAlertTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteStepTargetTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteSystemTimeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteTimeFormatTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteUnitTypeTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/task/ZWriteUserInfoTask.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/utils/BaseHandler.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/utils/BleConnectionCompat.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/utils/ComplexDataParse.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/utils/DigitalConver.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/utils/MokoUtils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/MokoConstants.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <source-file src="src/android/lib/support/MokoSupport.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
 
     </platform>
 	
