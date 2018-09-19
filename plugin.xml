@@ -8,7 +8,7 @@
         <engine name="cordova" version=">=3.0.0"/>
     </engines>
 
-    <name>Background Service Plugin - Sample Background Service</name>
+    <name>bgs-sample</name>
 
     <description>
         Sample service to demonstrate the use of the Cordova Android Background Service
@@ -24,7 +24,7 @@
     <!-- android -->
     <platform name="android">
 
-		<asset src="www/myService.html" target="myService.html" />
+		<!-- <asset src="www/myService.html" target="myService.html" /> -->
 
 		<js-module src="www/myService.js" name="MyService">
 			<clobbers target="cordova.plugins.myService" />
@@ -32,21 +32,22 @@
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
   
-            <service android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MokoService">
+            <service android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MyService">
                 <intent-filter>         
-                    <action android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MokoService"/> 
+                    <action android:name="com.aiotlabs.ifitpro.plugin.bluetooth.MyService"/> 
                 </intent-filter>     
             </service>
             
         </config-file>
 
-        <framework custom="true" src="src/android/ifitprobt-sdk.gradle" type="gradleReference" />
+        <!-- <framework custom="true" src="src/android/ifitprobt-sdk.gradle" type="gradleReference" /> -->
 
-        
-        <source-file src="src/android/lib/service/MokoService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+
+        <source-file src="src/android/MyService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" /> 
+        <!-- <source-file src="src/android/lib/service/MokoService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" /> -->
 
         <!-- <source-file src="src/android/IFitProBtPlugin.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" /> -->
-        <source-file src="src/android/lib/service/FitpoloNotificationCollectorMonitorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
+        <!-- <source-file src="src/android/lib/service/FitpoloNotificationCollectorMonitorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/service/FitpoloNotificationCollectorService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/service/MokoService.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/utils/FileUtils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
@@ -127,7 +128,7 @@
         <source-file src="src/android/lib/support/utils/DigitalConver.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/support/utils/MokoUtils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/support/MokoConstants.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
-        <source-file src="src/android/lib/support/MokoSupport.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
+        <source-file src="src/android/lib/support/MokoSupport.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/> -->
 
     </platform>
 	
