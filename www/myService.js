@@ -19,7 +19,7 @@
  * This needs to be full qualified name of your service class
  * This will be the combination of the package & class name in your service java file
  */
-var serviceName = 'com.aiotlabs.ifitpro.plugin.bluetooth.MyService';
+var serviceName = 'com.aiotlabs.ifitpro.plugin.bluetooth.MokoService';
 
 /*
  * Get an instance of the background service factory

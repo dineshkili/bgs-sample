@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.Calendar;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,11 +73,12 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 			String msg = "Hello " + this.mHelloTo + " - its currently " + now;
 			result.put("Message", msg);
 
-			Log.d(TAG, msg);
+            Log.d(TAG, msg);
+
 		} catch (JSONException e) {
 		}
 		
-		return result;	
+		return orderResult;	
 	}
 
 	@Override
@@ -92,14 +95,21 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 	@Override
 	protected void setConfig(JSONObject config) {
-        JSONObject result = new JSONObject();
-		try {
-			if (config.has("search")){
-                searchDevices();
-                result.put("action", "Searching");
+        try {
+			if (config.has("data")){
+                this.mHelloTo = config.getString("data");
+                if (this.mHelloTo.equals("s")){
+                    searchDevices();
+                }
+                if (this.mHelloTo.equals("c")){
+                    connectBluetoothDevice(scanState.getString("ifitdevaddr"));
+                }
+                if(this.mHelloTo.equals("steps")){
+                    getLastestSteps();
+                }
             }
-        } 
-        catch (JSONException e) {
+		} catch (JSONException e) {
+
 		}
 		
 	}     
@@ -131,10 +141,12 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     
 
     /* ********************************************************************************** 
-     * METHODS Implementation
+     * BLUETOOT CONNECTION related
      * ***********************************************************************************/
 
     public void searchDevices() {
+        Log.d(TAG, "SEARCH DEVICES");
+
         MokoSupport.getInstance().startScanDevice(this);
     }
 
@@ -153,6 +165,15 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     }
 
 
+
+     /* ********************************************************************************** 
+     * BLUETOOT DATA related
+     * ***********************************************************************************/
+
+    public void getLastestSteps() {
+        Calendar calendar = Utils.strDate2Calendar("2018-09-18 00:00", AppConstants.PATTERN_YYYY_MM_DD_HH_MM);
+        MokoSupport.getInstance().sendOrder(new ZReadStepTask(this, calendar));
+    }
 
 
 
@@ -173,6 +194,12 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     @Override
     public void onScanDevice(BleDevice device) {
         deviceMap.put(device.address, device);
+        try{
+            scanState.put("ifitdevaddr", device.address);
+        } catch (JSONException e) {
+        }
+
+        LogModule.i(device.address);
         // mDatas.clear();
         // mDatas.addAll(deviceMap.values());
         // mAdapter.notifyDataSetChanged();
@@ -225,6 +252,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
         Intent intent = new Intent(new Intent(MokoConstants.ACTION_ORDER_RESULT));
         intent.putExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK, response);
+        parseResponse(response);
         sendOrderedBroadcast(intent, null);
     }
 
@@ -241,48 +269,179 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     }
 
     
+
+
+
+
+    public void  parseResponse(OrderTaskResponse response){
+            OrderEnum orderEnum = response.order;
+            switch (orderEnum) {
+                case Z_READ_VERSION:
+                    LogModule.i("Version code：" + MokoSupport.versionCode);
+                    LogModule.i("Should upgrade：" + MokoSupport.canUpgrade);
+                    break;
+                case Z_READ_USER_INFO:
+                    UserInfo userInfo = MokoSupport.getInstance().getUserInfo();
+                    LogModule.i(userInfo.toString());
+                    break;
+                case Z_READ_ALARMS:
+                    ArrayList<BandAlarm> bandAlarms = MokoSupport.getInstance().getAlarms();
+                    if (bandAlarms.size() == 0) {
+                        return;
+                    }
+                    for (BandAlarm bandAlarm : bandAlarms) {
+                        LogModule.i(bandAlarm.toString());
+                    }
+                    break;
+                case Z_READ_UNIT_TYPE:
+                    boolean unitType = MokoSupport.getInstance().getUnitTypeBritish();
+                    LogModule.i("Unit type british:" + unitType);
+                    break;
+                case Z_READ_TIME_FORMAT:
+                    int timeFormat = MokoSupport.getInstance().getTimeFormat();
+                    LogModule.i("Time format:" + timeFormat);
+                    break;
+                case Z_READ_AUTO_LIGHTEN:
+                    AutoLighten autoLighten = MokoSupport.getInstance().getAutoLighten();
+                    LogModule.i(autoLighten.toString());
+                    break;
+                case Z_READ_SIT_ALERT:
+                    SitAlert sitAlert = MokoSupport.getInstance().getSitAlert();
+                    LogModule.i(sitAlert.toString());
+                    break;
+                case Z_READ_LAST_SCREEN:
+                    boolean lastScreen = MokoSupport.getInstance().getLastScreen();
+                    LogModule.i("Last screen:" + lastScreen);
+                    break;
+                case Z_READ_HEART_RATE_INTERVAL:
+                    int interval = MokoSupport.getInstance().getHeartRateInterval();
+                    LogModule.i("Heart rate interval:" + interval);
+                    break;
+                case Z_READ_CUSTOM_SCREEN:
+                    CustomScreen customScreen = MokoSupport.getInstance().getCustomScreen();
+                    LogModule.i(customScreen.toString());
+                    break;
+                case Z_READ_STEPS:
+                    ArrayList<DailyStep> lastestSteps = MokoSupport.getInstance().getDailySteps();
+                    if (lastestSteps == null || lastestSteps.isEmpty()) {
+                        return;
+                    }
+                    for (DailyStep step : lastestSteps) {
+                        try {
+                            orderResult.put("steps", step.count);
+                            orderResult.put("caloroies", step.calories);
+                            orderResult.put("distance", step.distance);
+                            orderResult.put("duration", step.duration);
+
+                        } catch (JSONException e) {
+                        }
+                        LogModule.i("MokoService >> " + step.toString());
+                    }
+                    break;
+                case Z_READ_SLEEP_GENERAL:
+                    ArrayList<DailySleep> lastestSleeps = MokoSupport.getInstance().getDailySleeps();
+                    if (lastestSleeps == null || lastestSleeps.isEmpty()) {
+                        return;
+                    }
+                    for (DailySleep sleep : lastestSleeps) {
+                        LogModule.i(sleep.toString());
+                    }
+                    break;
+                case Z_READ_HEART_RATE:
+                    ArrayList<HeartRate> lastestHeartRate = MokoSupport.getInstance().getHeartRates();
+                    if (lastestHeartRate == null || lastestHeartRate.isEmpty()) {
+                        return;
+                    }
+                    for (HeartRate heartRate : lastestHeartRate) {
+                        LogModule.i(heartRate.toString());
+                    }
+                    break;
+                case Z_READ_STEP_TARGET:
+                    LogModule.i("Step target:" + MokoSupport.getInstance().getStepTarget());
+                    break;
+                case Z_READ_DIAL:
+                    LogModule.i("Dial:" + MokoSupport.getInstance().getDial());
+                    break;
+                case Z_READ_NODISTURB:
+                    LogModule.i(MokoSupport.getInstance().getNodisturb().toString());
+                    break;
+                case Z_READ_PARAMS:
+                    LogModule.i("Product batch：" + MokoSupport.getInstance().getProductBatch());
+                    LogModule.i("Params：" + MokoSupport.getInstance().getParams().toString());
+                    break;
+                case Z_READ_LAST_CHARGE_TIME:
+                    LogModule.i("Last charge time：" + MokoSupport.getInstance().getLastChargeTime());
+                    break;
+                case Z_READ_BATTERY:
+                    LogModule.i("Battery：" + MokoSupport.getInstance().getBatteryQuantity());
+                    break;
+            }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /* >> Service Entry Point */
 
     @Override
     public void onCreate() {
-        LogModule.i("创建MokoService...onCreate");
+        // LogModule.i("创建MokoService...onCreate");
+        MokoSupport.getInstance().init(this);
+
         super.onCreate();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        LogModule.i("启动MokoService...onStartCommand");
-        return super.onStartCommand(intent, flags, startId);
-    }
+    // @Override
+    // public int onStartCommand(Intent intent, int flags, int startId) {
+    //     LogModule.i("启动MokoService...onStartCommand");
+    //     return super.onStartCommand(intent, flags, startId);
+    // }
 
-    private IBinder mBinder = new LocalBinder();
+    // private IBinder mBinder = new LocalBinder();
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        LogModule.i("绑定MokoService...onBind");
-        return mBinder;
-    }
+    // @Override
+    // public IBinder onBind(Intent intent) {
+    //     LogModule.i("绑定MokoService...onBind");
+    //     return mBinder;
+    // }
 
-    @Override
-    public void onLowMemory() {
-        LogModule.i("内存吃紧，销毁MokoService...onLowMemory");
-        disConnectBle();
-        super.onLowMemory();
-    }
+    // @Override
+    // public void onLowMemory() {
+    //     LogModule.i("内存吃紧，销毁MokoService...onLowMemory");
+    //     disConnectBle();
+    //     super.onLowMemory();
+    // }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-        LogModule.i("解绑MokoService...onUnbind");
-        return super.onUnbind(intent);
-    }
+    // @Override
+    // public boolean onUnbind(Intent intent) {
+    //     LogModule.i("解绑MokoService...onUnbind");
+    //     return super.onUnbind(intent);
+    // }
 
-    @Override
-    public void onDestroy() {
-        LogModule.i("销毁MokoService...onDestroy");
-        disConnectBle();
-        MokoSupport.getInstance().setOpenReConnect(false);
-        super.onDestroy();
-    }
+    // @Override
+    // public void onDestroy() {
+    //     LogModule.i("销毁MokoService...onDestroy");
+    //     disConnectBle();
+    //     MokoSupport.getInstance().setOpenReConnect(false);
+    //     super.onDestroy();
+    // }
 
     public class LocalBinder extends Binder {
         public MokoService getService() {

@@ -135,7 +135,7 @@ public class MokoSupport implements MokoResponseCallback {
             mokoScanDeviceCallback.onStopScan();
             return;
         }
-        LogModule.i("开始扫描");
+        LogModule.i("START SCANNING!");
         final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
         ScanSettings settings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)

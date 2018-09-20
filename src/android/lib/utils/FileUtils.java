@@ -1,4 +1,4 @@
-package com.aiotlabs.ifitpro.plugin.bluetooth.utils;
+package com.aiotlabs.ifitpro.plugin.bluetooth;
 
 import android.content.ContentUris;
 import android.content.Context;
