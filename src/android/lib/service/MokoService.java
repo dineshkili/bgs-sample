@@ -11,6 +11,7 @@ import java.util.Calendar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 import android.util.Log;
 
@@ -23,24 +24,48 @@ import android.os.IBinder;
 import android.os.Message;
 
 import com.aiotlabs.ifitpro.plugin.bluetooth.AppConstants;
+import com.aiotlabs.ifitpro.plugin.bluetooth.AutoLighten;
+import com.aiotlabs.ifitpro.plugin.bluetooth.BandAlarm;
 import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConstants;
 import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
 import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConnStateCallback;
 import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
 import com.aiotlabs.ifitpro.plugin.bluetooth.OrderTaskResponse;
+import com.aiotlabs.ifitpro.plugin.bluetooth.SitAlert;
 import com.aiotlabs.ifitpro.plugin.bluetooth.BaseMessageHandler;
+import com.aiotlabs.ifitpro.plugin.bluetooth.DailySleep;
+import com.aiotlabs.ifitpro.plugin.bluetooth.HeartRate;
 import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
 
 
 public class MokoService extends BackgroundService implements MokoScanDeviceCallback, MokoConnStateCallback, MokoOrderTaskCallback {
     
 
+    private final String DEVICE_CMDS = "DEVICE_CMDS";
+    private final String SCAN = "SCAN";
+    private final String CONNECT = "CONNECT";
+    private final String STEPS = "STEPS";
+    private final String SLEEPS = "SLEEPS";
+    private final String SETALARM ="SETALARM";
+    private final String GETALARM = "GETALARM";
+    private final String SETAUTOLIGHTEN = "SETAUTOLIGHTEN";
+    private final String GETAUTOLIGHTEN = "GETAUTOLIGHTEN";
+    private final String SETSITALERT = "SETSITALERT";
+    private final String GETSITALERT = "GETSITALERT";
+    private final String SETHEARTRATEINTERVAL = "SETHEARTRATEINTERVAL";
+    private final String GETHEARTRATEINTERVAL = "GETHEARTRATEINTERVAL";
+    private final String SETSTEPTARGET = "SETSTEPTARGET";
+    private final String GETSTEPTARGET = "GETSTEPTARGET";
+    private final String GETLATESTHEARTRATE = "GETLATESTHEARTRATE";
+    private final String STEPCHANGELISTENER = "STEPCHANGELISTENER";
+
+
     private final static String TAG = MokoService.class.getSimpleName();
 
     private HashMap<String, BleDevice> deviceMap;
 
     
-    private String mHelloTo = "World";
+    private String serviceAction = "init";
     JSONObject scanState = new JSONObject();    
     JSONObject connectionState = new JSONObject();
     JSONObject orderResult = new JSONObject();
@@ -68,12 +93,12 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 		
 		try {
 			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"); 
-			String now = df.format(new Date(System.currentTimeMillis())); 
+            String now = df.format(new Date(System.currentTimeMillis())); 
+            
+            result.put("action", this.serviceAction);
+            result.put("time", now);
 
-			String msg = "Hello " + this.mHelloTo + " - its currently " + now;
-			result.put("Message", msg);
-
-            Log.d(TAG, msg);
+            Log.d(TAG, this.serviceAction);
 
 		} catch (JSONException e) {
 		}
@@ -86,7 +111,11 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 		JSONObject result = new JSONObject();
 		
 		try {
-			result.put("HelloTo", this.mHelloTo);
+            result.put("serviceAction", this.serviceAction);
+            result.put("scanResult", this.scanState);
+            result.put("connectionResult", this.connectionState);
+            result.put("orderResult", this.orderResult);
+            
 		} catch (JSONException e) {
 		}
 		
@@ -96,17 +125,59 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 	@Override
 	protected void setConfig(JSONObject config) {
         try {
-			if (config.has("data")){
-                this.mHelloTo = config.getString("data");
-                if (this.mHelloTo.equals("s")){
+			if (config.has(DEVICE_CMDS)){
+                this.serviceAction = config.getString(DEVICE_CMDS);
+                LogModule.i(config.getString(DEVICE_CMDS));
+                
+                if (this.serviceAction.equals(SCAN)){
                     searchDevices();
                 }
-                if (this.mHelloTo.equals("c")){
+                if (this.serviceAction.equals(CONNECT)){
                     connectBluetoothDevice(scanState.getString("ifitdevaddr"));
                 }
-                if(this.mHelloTo.equals("steps")){
+                if(this.serviceAction.equals(SETALARM)){
+                    setAllAlarm();
+                }
+                if(this.serviceAction.equals(GETALARM)){
+                    getAllAlarms();
+                }
+                if(this.serviceAction.equals(SETAUTOLIGHTEN)){
+                    setAutoLighten();
+                }
+                if(this.serviceAction.equals(GETAUTOLIGHTEN)){
+                    getAutoLighten();
+                }
+                if(this.serviceAction.equals(SETSITALERT)){
+                    setSitAlert();
+                }
+                if(this.serviceAction.equals(GETSITALERT)){
+                    getSitAlert();
+                }
+                if(this.serviceAction.equals(SETHEARTRATEINTERVAL)){
+                    setHeartRateInterval();
+                }
+                if(this.serviceAction.equals(GETHEARTRATEINTERVAL)){
+                    getHeartRateInterval();
+                }
+                if(this.serviceAction.equals(SETSTEPTARGET)){
+                    setStepTarget();
+                }
+                if(this.serviceAction.equals(GETSTEPTARGET)){
+                    getStepTarget();
+                }
+                if(this.serviceAction.equals(STEPS)){
                     getLastestSteps();
                 }
+                if(this.serviceAction.equals(SLEEPS)){
+                    getLatestSleeps();
+                }
+                if(this.serviceAction.equals(GETLATESTHEARTRATE)){
+                    getLatestHeartRate();
+                }
+                if(this.serviceAction.equals(STEPCHANGELISTENER)){
+                    openStepChangeListener();
+                }
+                
             }
 		} catch (JSONException e) {
 
@@ -169,10 +240,93 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
      /* ********************************************************************************** 
      * BLUETOOT DATA related
      * ***********************************************************************************/
+    public void setAllAlarm(){
+        BandAlarm drinkalarm1 =new BandAlarm();
+        drinkalarm1.time ="15:48";
+        drinkalarm1.state ="10010000";
+        drinkalarm1.type = 1; //DRINK WATER
 
+        BandAlarm drinkalarm2 =new BandAlarm();
+        drinkalarm2.time ="15:58";
+        drinkalarm2.state ="10010000";
+        drinkalarm2.type = 1; //DRINK WATER
+
+        BandAlarm drinkalarm3 =new BandAlarm();
+        drinkalarm3.time ="16:08";
+        drinkalarm3.state ="10010000";
+        drinkalarm3.type = 1; //DRINK WATER
+
+        ArrayList<BandAlarm> alarms = new ArrayList<BandAlarm>();
+        alarms.add(drinkalarm1);
+        alarms.add(drinkalarm2);
+        alarms.add(drinkalarm3);
+        
+        MokoSupport.getInstance().sendOrder(new ZWriteAlarmsTask(this,alarms));
+
+    }
+
+    public void getAllAlarms(){
+        MokoSupport.getInstance().sendOrder(new ZReadAlarmsTask(this));
+    }
+
+    public void setAutoLighten(){
+        AutoLighten autoLighten = new AutoLighten();
+        autoLighten.autoLighten = 1;
+        autoLighten.startTime = "08:00";
+        autoLighten.endTime = "23:00";
+
+        MokoSupport.getInstance().sendOrder(new ZWriteAutoLightenTask(this, autoLighten));
+    }
+
+    public void getAutoLighten(){
+        MokoSupport.getInstance().sendOrder(new ZReadAutoLightenTask(this));
+    }
+
+    public void setSitAlert(){
+        SitAlert alert =new SitAlert();
+        alert.alertSwitch = 1;
+        alert.startTime = "11:00";
+        alert.endTime = "22:00";
+        MokoSupport.getInstance().sendOrder(new ZWriteSitAlertTask(this, alert));
+    }
+
+    public void getSitAlert(){
+        MokoSupport.getInstance().sendOrder(new ZReadSitAlertTask(this));
+    }
+
+    public void setHeartRateInterval(){
+        MokoSupport.getInstance().sendOrder(new ZWriteHeartRateIntervalTask(this, 2));
+
+    }
+
+    public void getHeartRateInterval(){
+        MokoSupport.getInstance().sendOrder(new ZReadHeartRateIntervalTask(this));
+    }
+
+    public void setStepTarget(){
+        MokoSupport.getInstance().sendOrder(new ZWriteStepTargetTask(this, 10000));
+    }
+
+    public void getStepTarget(){
+        MokoSupport.getInstance().sendOrder(new ZReadStepTargetTask(this));
+    }
     public void getLastestSteps() {
         Calendar calendar = Utils.strDate2Calendar("2018-09-18 00:00", AppConstants.PATTERN_YYYY_MM_DD_HH_MM);
         MokoSupport.getInstance().sendOrder(new ZReadStepTask(this, calendar));
+    }
+
+    public void getLatestSleeps(){
+        Calendar calendar = Utils.strDate2Calendar("2018-09-18 00:00", AppConstants.PATTERN_YYYY_MM_DD_HH_MM);
+        MokoSupport.getInstance().sendOrder(new ZReadSleepGeneralTask(this, calendar));
+    }
+    
+    public void getLatestHeartRate(){
+        Calendar calendar = Utils.strDate2Calendar("2018-09-18 00:00", AppConstants.PATTERN_YYYY_MM_DD_HH_MM);
+        MokoSupport.getInstance().sendOrder(new ZReadHeartRateTask(this, calendar));
+    }
+
+    public void openStepChangeListener(){
+        MokoSupport.getInstance().sendOrder(new ZOpenStepListenerTask(this));
     }
 
 
@@ -225,22 +379,35 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     
     @Override
     public void onConnectSuccess() {
-
-        Intent intent = new Intent(MokoConstants.ACTION_DISCOVER_SUCCESS);
-        sendOrderedBroadcast(intent, null);
+        try{
+            connectionState.put("state", MokoConstants.ACTION_DISCOVER_SUCCESS);
+        } catch (JSONException e){    
+        }
+        // Intent intent = new Intent(MokoConstants.ACTION_DISCOVER_SUCCESS);
+        // sendOrderedBroadcast(intent, null);
     }
 
     @Override
     public void onDisConnected() {
-        Intent intent = new Intent(MokoConstants.ACTION_CONN_STATUS_DISCONNECTED);
-        sendOrderedBroadcast(intent, null);
+        try{
+            connectionState.put("state", MokoConstants.ACTION_CONN_STATUS_DISCONNECTED);
+        } catch (JSONException e){
+        }
+        // Intent intent = new Intent(MokoConstants.ACTION_CONN_STATUS_DISCONNECTED);
+        // sendOrderedBroadcast(intent, null);
     }
 
     @Override
     public void onConnTimeout(int reConnCount) {
-        Intent intent = new Intent(MokoConstants.ACTION_DISCOVER_TIMEOUT);
-        intent.putExtra(AppConstants.EXTRA_CONN_COUNT, reConnCount);
-        sendBroadcast(intent);
+        try{
+            connectionState.put("state", MokoConstants.ACTION_DISCOVER_TIMEOUT);
+            connectionState.put("AppConstants.EXTRA_CONN_COUNT", reConnCount);
+        } catch (JSONException e){
+        }
+        
+        // Intent intent = new Intent(MokoConstants.ACTION_DISCOVER_TIMEOUT);
+        // intent.putExtra(AppConstants.EXTRA_CONN_COUNT, reConnCount);
+        // sendBroadcast(intent);
     }
 
 
@@ -250,22 +417,22 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     @Override
     public void onOrderResult(OrderTaskResponse response) {
 
-        Intent intent = new Intent(new Intent(MokoConstants.ACTION_ORDER_RESULT));
-        intent.putExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK, response);
+        // Intent intent = new Intent(new Intent(MokoConstants.ACTION_ORDER_RESULT));
+        // intent.putExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK, response);
         parseResponse(response);
-        sendOrderedBroadcast(intent, null);
+        // sendOrderedBroadcast(intent, null);
     }
 
     @Override
     public void onOrderTimeout(OrderTaskResponse response) {
-        Intent intent = new Intent(new Intent(MokoConstants.ACTION_ORDER_TIMEOUT));
-        intent.putExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK, response);
-        sendBroadcast(intent);
+        // Intent intent = new Intent(new Intent(MokoConstants.ACTION_ORDER_TIMEOUT));
+        // intent.putExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK, response);
+        // sendBroadcast(intent);
     }
 
     @Override
     public void onOrderFinish() {
-        sendBroadcast(new Intent(MokoConstants.ACTION_ORDER_FINISH));
+        // sendBroadcast(new Intent(MokoConstants.ACTION_ORDER_FINISH));
     }
 
     
@@ -275,6 +442,9 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
     public void  parseResponse(OrderTaskResponse response){
             OrderEnum orderEnum = response.order;
+
+            LogModule.i("PARSE RESPONSE : " + orderEnum);
+
             switch (orderEnum) {
                 case Z_READ_VERSION:
                     LogModule.i("Version code：" + MokoSupport.versionCode);
@@ -286,10 +456,18 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                     break;
                 case Z_READ_ALARMS:
                     ArrayList<BandAlarm> bandAlarms = MokoSupport.getInstance().getAlarms();
+                    LogModule.i(bandAlarms.toString());
+
                     if (bandAlarms.size() == 0) {
                         return;
                     }
                     for (BandAlarm bandAlarm : bandAlarms) {
+                        try{
+                            orderResult.put("alarm time",bandAlarm.time);
+                            orderResult.put("alarm state",bandAlarm.state);
+                            orderResult.put("alarm type",bandAlarm.type);
+                        } catch (JSONException e){
+                        }
                         LogModule.i(bandAlarm.toString());
                     }
                     break;
@@ -303,10 +481,22 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                     break;
                 case Z_READ_AUTO_LIGHTEN:
                     AutoLighten autoLighten = MokoSupport.getInstance().getAutoLighten();
+                    try{
+                        orderResult.put("auto lighten status",autoLighten.autoLighten);
+                        orderResult.put("auto lighten starting time",autoLighten.startTime);
+                        orderResult.put("auto lighten ending time",autoLighten.endTime);
+                    } catch (JSONException e){    
+                    }
                     LogModule.i(autoLighten.toString());
                     break;
                 case Z_READ_SIT_ALERT:
                     SitAlert sitAlert = MokoSupport.getInstance().getSitAlert();
+                    try{
+                        orderResult.put("set sit alert",sitAlert.alertSwitch);
+                        orderResult.put("sit alert start time ", sitAlert.startTime);
+                        orderResult.put("sit alert end time",sitAlert.endTime);
+                    } catch (JSONException e){    
+                    }
                     LogModule.i(sitAlert.toString());
                     break;
                 case Z_READ_LAST_SCREEN:
@@ -315,6 +505,10 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                     break;
                 case Z_READ_HEART_RATE_INTERVAL:
                     int interval = MokoSupport.getInstance().getHeartRateInterval();
+                    try{
+                        orderResult.put("heart rate interval",interval);
+                    }catch(JSONException e){
+                    }
                     LogModule.i("Heart rate interval:" + interval);
                     break;
                 case Z_READ_CUSTOM_SCREEN:
@@ -344,6 +538,12 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                         return;
                     }
                     for (DailySleep sleep : lastestSleeps) {
+                        try{
+                            orderResult.put("awake hours",sleep.awakeDuration);
+                            orderResult.put("sleep hours",sleep.deepDuration);
+                            orderResult.put("wake time",sleep.endTime);
+                        } catch (JSONException e) { 
+                        };
                         LogModule.i(sleep.toString());
                     }
                     break;
@@ -353,10 +553,20 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                         return;
                     }
                     for (HeartRate heartRate : lastestHeartRate) {
+                        try{
+                            orderResult.put("latest heartRate at ",heartRate.time);
+                            orderResult.put("heartRate Value ",heartRate.value);
+                        }catch (JSONException e){
+                        }
                         LogModule.i(heartRate.toString());
                     }
                     break;
                 case Z_READ_STEP_TARGET:
+                    int target = MokoSupport.getInstance().getStepTarget();
+                    try{
+                        orderResult.put("step target",target);
+                    }catch (JSONException e){
+                    }
                     LogModule.i("Step target:" + MokoSupport.getInstance().getStepTarget());
                     break;
                 case Z_READ_DIAL:
