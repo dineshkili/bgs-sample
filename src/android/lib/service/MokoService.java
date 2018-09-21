@@ -22,6 +22,14 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Message;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.bluetooth.BluetoothAdapter;
+import android.os.RemoteException;
+
 
 import com.aiotlabs.ifitpro.plugin.bluetooth.AppConstants;
 import com.aiotlabs.ifitpro.plugin.bluetooth.AutoLighten;
@@ -304,7 +312,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     }
 
     public void setStepTarget(){
-        MokoSupport.getInstance().sendOrder(new ZWriteStepTargetTask(this, 10000));
+        MokoSupport.getInstance().sendOrder(new ZWriteStepTargetTask(this, 1390));
     }
 
     public void getStepTarget(){
@@ -441,164 +449,190 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 
     public void  parseResponse(OrderTaskResponse response){
-            OrderEnum orderEnum = response.order;
+        OrderEnum orderEnum = response.order;
 
-            LogModule.i("PARSE RESPONSE : " + orderEnum);
+        LogModule.i("PARSE RESPONSE : " + orderEnum);
 
-            switch (orderEnum) {
-                case Z_READ_VERSION:
-                    LogModule.i("Version code：" + MokoSupport.versionCode);
-                    LogModule.i("Should upgrade：" + MokoSupport.canUpgrade);
-                    break;
-                case Z_READ_USER_INFO:
-                    UserInfo userInfo = MokoSupport.getInstance().getUserInfo();
-                    LogModule.i(userInfo.toString());
-                    break;
-                case Z_READ_ALARMS:
-                    ArrayList<BandAlarm> bandAlarms = MokoSupport.getInstance().getAlarms();
-                    LogModule.i(bandAlarms.toString());
+        switch (orderEnum) {
+            case Z_READ_VERSION:
+                LogModule.i("Version code：" + MokoSupport.versionCode);
+                LogModule.i("Should upgrade：" + MokoSupport.canUpgrade);
+                break;
+            case Z_READ_USER_INFO:
+                UserInfo userInfo = MokoSupport.getInstance().getUserInfo();
+                LogModule.i(userInfo.toString());
+                break;
+            case Z_READ_ALARMS:
+                ArrayList<BandAlarm> bandAlarms = MokoSupport.getInstance().getAlarms();
+                LogModule.i(bandAlarms.toString());
 
-                    if (bandAlarms.size() == 0) {
-                        return;
-                    }
-                    for (BandAlarm bandAlarm : bandAlarms) {
-                        try{
-                            orderResult.put("alarm time",bandAlarm.time);
-                            orderResult.put("alarm state",bandAlarm.state);
-                            orderResult.put("alarm type",bandAlarm.type);
-                        } catch (JSONException e){
-                        }
-                        LogModule.i(bandAlarm.toString());
-                    }
-                    break;
-                case Z_READ_UNIT_TYPE:
-                    boolean unitType = MokoSupport.getInstance().getUnitTypeBritish();
-                    LogModule.i("Unit type british:" + unitType);
-                    break;
-                case Z_READ_TIME_FORMAT:
-                    int timeFormat = MokoSupport.getInstance().getTimeFormat();
-                    LogModule.i("Time format:" + timeFormat);
-                    break;
-                case Z_READ_AUTO_LIGHTEN:
-                    AutoLighten autoLighten = MokoSupport.getInstance().getAutoLighten();
+                if (bandAlarms.size() == 0) {
+                    return;
+                }
+                for (BandAlarm bandAlarm : bandAlarms) {
                     try{
-                        orderResult.put("auto lighten status",autoLighten.autoLighten);
-                        orderResult.put("auto lighten starting time",autoLighten.startTime);
-                        orderResult.put("auto lighten ending time",autoLighten.endTime);
-                    } catch (JSONException e){    
+                        orderResult.put("alarm time",bandAlarm.time);
+                        orderResult.put("alarm state",bandAlarm.state);
+                        orderResult.put("alarm type",bandAlarm.type);
+                    } catch (JSONException e){
                     }
-                    LogModule.i(autoLighten.toString());
-                    break;
-                case Z_READ_SIT_ALERT:
-                    SitAlert sitAlert = MokoSupport.getInstance().getSitAlert();
-                    try{
-                        orderResult.put("set sit alert",sitAlert.alertSwitch);
-                        orderResult.put("sit alert start time ", sitAlert.startTime);
-                        orderResult.put("sit alert end time",sitAlert.endTime);
-                    } catch (JSONException e){    
-                    }
-                    LogModule.i(sitAlert.toString());
-                    break;
-                case Z_READ_LAST_SCREEN:
-                    boolean lastScreen = MokoSupport.getInstance().getLastScreen();
-                    LogModule.i("Last screen:" + lastScreen);
-                    break;
-                case Z_READ_HEART_RATE_INTERVAL:
-                    int interval = MokoSupport.getInstance().getHeartRateInterval();
-                    try{
-                        orderResult.put("heart rate interval",interval);
-                    }catch(JSONException e){
-                    }
-                    LogModule.i("Heart rate interval:" + interval);
-                    break;
-                case Z_READ_CUSTOM_SCREEN:
-                    CustomScreen customScreen = MokoSupport.getInstance().getCustomScreen();
-                    LogModule.i(customScreen.toString());
-                    break;
-                case Z_READ_STEPS:
-                    ArrayList<DailyStep> lastestSteps = MokoSupport.getInstance().getDailySteps();
-                    if (lastestSteps == null || lastestSteps.isEmpty()) {
-                        return;
-                    }
-                    for (DailyStep step : lastestSteps) {
-                        try {
-                            orderResult.put("steps", step.count);
-                            orderResult.put("caloroies", step.calories);
-                            orderResult.put("distance", step.distance);
-                            orderResult.put("duration", step.duration);
+                    LogModule.i(bandAlarm.toString());
+                }
+                break;
+            case Z_READ_UNIT_TYPE:
+                boolean unitType = MokoSupport.getInstance().getUnitTypeBritish();
+                LogModule.i("Unit type british:" + unitType);
+                break;
+            case Z_READ_TIME_FORMAT:
+                int timeFormat = MokoSupport.getInstance().getTimeFormat();
+                LogModule.i("Time format:" + timeFormat);
+                break;
+            case Z_READ_AUTO_LIGHTEN:
+                AutoLighten autoLighten = MokoSupport.getInstance().getAutoLighten();
+                try{
+                    orderResult.put("auto lighten status",autoLighten.autoLighten);
+                    orderResult.put("auto lighten starting time",autoLighten.startTime);
+                    orderResult.put("auto lighten ending time",autoLighten.endTime);
+                } catch (JSONException e){    
+                }
+                LogModule.i(autoLighten.toString());
+                break;
+            case Z_READ_SIT_ALERT:
+                SitAlert sitAlert = MokoSupport.getInstance().getSitAlert();
+                try{
+                    orderResult.put("set sit alert",sitAlert.alertSwitch);
+                    orderResult.put("sit alert start time ", sitAlert.startTime);
+                    orderResult.put("sit alert end time",sitAlert.endTime);
+                } catch (JSONException e){    
+                }
+                LogModule.i(sitAlert.toString());
+                break;
+            case Z_READ_LAST_SCREEN:
+                boolean lastScreen = MokoSupport.getInstance().getLastScreen();
+                LogModule.i("Last screen:" + lastScreen);
+                break;
+            case Z_READ_HEART_RATE_INTERVAL:
+                int interval = MokoSupport.getInstance().getHeartRateInterval();
+                try{
+                    orderResult.put("heart rate interval",interval);
+                }catch(JSONException e){
+                }
+                LogModule.i("Heart rate interval:" + interval);
+                break;
+            case Z_READ_CUSTOM_SCREEN:
+                CustomScreen customScreen = MokoSupport.getInstance().getCustomScreen();
+                LogModule.i(customScreen.toString());
+                break;
+            case Z_READ_STEPS:
+                ArrayList<DailyStep> lastestSteps = MokoSupport.getInstance().getDailySteps();
+                if (lastestSteps == null || lastestSteps.isEmpty()) {
+                    return;
+                }
+                for (DailyStep step : lastestSteps) {
+                    try {
+                        orderResult.put("steps", step.count);
+                        orderResult.put("caloroies", step.calories);
+                        orderResult.put("distance", step.distance);
+                        orderResult.put("duration", step.duration);
 
-                        } catch (JSONException e) {
-                        }
-                        LogModule.i("MokoService >> " + step.toString());
+                    } catch (JSONException e) {
                     }
-                    break;
-                case Z_READ_SLEEP_GENERAL:
-                    ArrayList<DailySleep> lastestSleeps = MokoSupport.getInstance().getDailySleeps();
-                    if (lastestSleeps == null || lastestSleeps.isEmpty()) {
-                        return;
-                    }
-                    for (DailySleep sleep : lastestSleeps) {
-                        try{
-                            orderResult.put("awake hours",sleep.awakeDuration);
-                            orderResult.put("sleep hours",sleep.deepDuration);
-                            orderResult.put("wake time",sleep.endTime);
-                        } catch (JSONException e) { 
-                        };
-                        LogModule.i(sleep.toString());
-                    }
-                    break;
-                case Z_READ_HEART_RATE:
-                    ArrayList<HeartRate> lastestHeartRate = MokoSupport.getInstance().getHeartRates();
-                    if (lastestHeartRate == null || lastestHeartRate.isEmpty()) {
-                        return;
-                    }
-                    for (HeartRate heartRate : lastestHeartRate) {
-                        try{
-                            orderResult.put("latest heartRate at ",heartRate.time);
-                            orderResult.put("heartRate Value ",heartRate.value);
-                        }catch (JSONException e){
-                        }
-                        LogModule.i(heartRate.toString());
-                    }
-                    break;
-                case Z_READ_STEP_TARGET:
-                    int target = MokoSupport.getInstance().getStepTarget();
+                    LogModule.i("MokoService >> " + step.toString());
+                }
+                break;
+            case Z_READ_SLEEP_GENERAL:
+                ArrayList<DailySleep> lastestSleeps = MokoSupport.getInstance().getDailySleeps();
+                if (lastestSleeps == null || lastestSleeps.isEmpty()) {
+                    return;
+                }
+                for (DailySleep sleep : lastestSleeps) {
                     try{
-                        orderResult.put("step target",target);
+                        orderResult.put("awake hours",sleep.awakeDuration);
+                        orderResult.put("sleep hours",sleep.deepDuration);
+                        orderResult.put("wake time",sleep.endTime);
+                    } catch (JSONException e) { 
+                    };
+                    LogModule.i(sleep.toString());
+                }
+                break;
+            case Z_READ_HEART_RATE:
+                ArrayList<HeartRate> lastestHeartRate = MokoSupport.getInstance().getHeartRates();
+                if (lastestHeartRate == null || lastestHeartRate.isEmpty()) {
+                    return;
+                }
+                for (HeartRate heartRate : lastestHeartRate) {
+                    try{
+                        orderResult.put("latest heartRate at ",heartRate.time);
+                        orderResult.put("heartRate Value ",heartRate.value);
                     }catch (JSONException e){
                     }
-                    LogModule.i("Step target:" + MokoSupport.getInstance().getStepTarget());
-                    break;
-                case Z_READ_DIAL:
-                    LogModule.i("Dial:" + MokoSupport.getInstance().getDial());
-                    break;
-                case Z_READ_NODISTURB:
-                    LogModule.i(MokoSupport.getInstance().getNodisturb().toString());
-                    break;
-                case Z_READ_PARAMS:
-                    LogModule.i("Product batch：" + MokoSupport.getInstance().getProductBatch());
-                    LogModule.i("Params：" + MokoSupport.getInstance().getParams().toString());
-                    break;
-                case Z_READ_LAST_CHARGE_TIME:
-                    LogModule.i("Last charge time：" + MokoSupport.getInstance().getLastChargeTime());
-                    break;
-                case Z_READ_BATTERY:
-                    LogModule.i("Battery：" + MokoSupport.getInstance().getBatteryQuantity());
-                    break;
-            }
-
+                    LogModule.i(heartRate.toString());
+                }
+                break;
+            case Z_READ_STEP_TARGET:
+                int target = MokoSupport.getInstance().getStepTarget();
+                try{
+                    orderResult.put("step target",target);
+                }catch (JSONException e){
+                }
+                LogModule.i("Step target:" + MokoSupport.getInstance().getStepTarget());
+                break;
+            case Z_READ_DIAL:
+                LogModule.i("Dial:" + MokoSupport.getInstance().getDial());
+                break;
+            case Z_READ_NODISTURB:
+                LogModule.i(MokoSupport.getInstance().getNodisturb().toString());
+                break;
+            case Z_READ_PARAMS:
+                LogModule.i("Product batch：" + MokoSupport.getInstance().getProductBatch());
+                LogModule.i("Params：" + MokoSupport.getInstance().getParams().toString());
+                break;
+            case Z_READ_LAST_CHARGE_TIME:
+                LogModule.i("Last charge time：" + MokoSupport.getInstance().getLastChargeTime());
+                break;
+            case Z_READ_BATTERY:
+                LogModule.i("Battery：" + MokoSupport.getInstance().getBatteryQuantity());
+                break;
+        }
     }
 
 
 
 
+    
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null) {
+                String action = intent.getAction();
+                if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
+                    OrderEnum orderEnum = (OrderEnum) intent.getSerializableExtra(MokoConstants.EXTRA_KEY_CURRENT_DATA_TYPE);
+                    switch (orderEnum) {
+                        case Z_STEPS_CHANGES_LISTENER:
+                            DailyStep dailyStep = MokoSupport.getInstance().getDailyStep();
+                            LogModule.i(dailyStep.toString());
 
+                            // Now call the listeners
+                            Log.i(TAG, "Sending to all listeners");
+                            for (int i = 0; i < mListeners.size(); i++)
+                            {
+                                try {
+                                    mListeners.get(i).handleUpdate();
+                                    Log.i(TAG, "Sent listener - " + i);
+                                } catch (RemoteException e) {
+                                    Log.i(TAG, "Failed to send to listener - " + i + " - " + e.getMessage());
+                                }
+                            }
+                            break;
+                    }
+                }
+    
+            }
 
+        }
 
-
-
-
+    };
 
 
 
@@ -616,6 +650,17 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         MokoSupport.getInstance().init(this);
 
         super.onCreate();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(MokoConstants.ACTION_CONN_STATUS_DISCONNECTED);
+        filter.addAction(MokoConstants.ACTION_DISCOVER_TIMEOUT);
+        filter.addAction(MokoConstants.ACTION_ORDER_RESULT);
+        filter.addAction(MokoConstants.ACTION_ORDER_TIMEOUT);
+        filter.addAction(MokoConstants.ACTION_ORDER_FINISH);
+        filter.addAction(MokoConstants.ACTION_CURRENT_DATA);
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        filter.setPriority(200);
+        registerReceiver(mReceiver, filter);
     }
 
     // @Override
