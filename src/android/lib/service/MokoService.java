@@ -10,6 +10,7 @@ import java.util.Calendar;
 
 
 import org.json.JSONException;
+import android.os.IBinder;
 import org.json.JSONObject;
 import org.omg.CORBA.PRIVATE_MEMBER;
 
@@ -20,7 +21,6 @@ import com.red_folder.phonegap.plugin.backgroundservice.BackgroundService;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.IBinder;
 import android.os.Message;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -30,12 +30,12 @@ import android.content.IntentFilter;
 import android.bluetooth.BluetoothAdapter;
 import android.os.RemoteException;
 
-
 import com.aiotlabs.ifitpro.plugin.bluetooth.AppConstants;
 import com.aiotlabs.ifitpro.plugin.bluetooth.AutoLighten;
 import com.aiotlabs.ifitpro.plugin.bluetooth.BandAlarm;
 import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConstants;
 import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
+import com.aiotlabs.ifitpro.plugin.bluetooth.NoDisturb;
 import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConnStateCallback;
 import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
 import com.aiotlabs.ifitpro.plugin.bluetooth.OrderTaskResponse;
@@ -45,6 +45,8 @@ import com.aiotlabs.ifitpro.plugin.bluetooth.DailySleep;
 import com.aiotlabs.ifitpro.plugin.bluetooth.HeartRate;
 import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
 
+import android.arch.persistence.room.Room;
+
 
 public class MokoService extends BackgroundService implements MokoScanDeviceCallback, MokoConnStateCallback, MokoOrderTaskCallback {
     
@@ -52,6 +54,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     private final String DEVICE_CMDS = "DEVICE_CMDS";
     private final String SCAN = "SCAN";
     private final String CONNECT = "CONNECT";
+    // private final String SCANANDCONNECT = "SCANANDCONNECT";
     private final String STEPS = "STEPS";
     private final String SLEEPS = "SLEEPS";
     private final String SETALARM ="SETALARM";
@@ -66,18 +69,24 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     private final String GETSTEPTARGET = "GETSTEPTARGET";
     private final String GETLATESTHEARTRATE = "GETLATESTHEARTRATE";
     private final String STEPCHANGELISTENER = "STEPCHANGELISTENER";
+    private final String SETNODISTURB = "SETNODISTURB";
+    private final String GETNODISTURB = "GETNODISTURB";
 
 
     private final static String TAG = MokoService.class.getSimpleName();
 
     private HashMap<String, BleDevice> deviceMap;
 
+
+    //Room variables
+
+    public static MyDatabase database;
     
     private String serviceAction = "init";
-    JSONObject scanState = new JSONObject();    
+    JSONObject scanState = new JSONObject();
+    // JSONObject scanAndConnectState =new JSONObject();    
     JSONObject connectionState = new JSONObject();
     JSONObject orderResult = new JSONObject();
-
 
 
     /* ********************************************************************************** 
@@ -143,6 +152,9 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                 if (this.serviceAction.equals(CONNECT)){
                     connectBluetoothDevice(scanState.getString("ifitdevaddr"));
                 }
+                // if(this.serviceAction.equals(SCANANDCONNECT)){
+                //     searchAndConnectDevices();
+                // }
                 if(this.serviceAction.equals(SETALARM)){
                     setAllAlarm();
                 }
@@ -178,6 +190,12 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                 }
                 if(this.serviceAction.equals(SLEEPS)){
                     getLatestSleeps();
+                }
+                if(this.serviceAction.equals(SETNODISTURB)){
+                    setNoDisturb();
+                }
+                if(this.serviceAction.equals(GETNODISTURB)){
+                    getNoDisturb();
                 }
                 if(this.serviceAction.equals(GETLATESTHEARTRATE)){
                     getLatestHeartRate();
@@ -233,6 +251,13 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     public void connectBluetoothDevice(String address) {
         MokoSupport.getInstance().connDevice(this, address, this);
     }
+
+    // public void searchAndConnectDevices(){
+    //     MokoSupport.getInstance().startScanDevice(this);
+    //     try{
+    //         MokoSupport.getInstance().connDevice(this, scanState.getString("deviceaddress"), this);
+    //     }catch( JSONException e){}
+    // }
 
     public void disConnectBle() {
         MokoSupport.getInstance().setReconnectCount(0);
@@ -328,6 +353,17 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         MokoSupport.getInstance().sendOrder(new ZReadSleepGeneralTask(this, calendar));
     }
     
+    public void setNoDisturb(){
+        NoDisturb noDisturb = new NoDisturb();
+        noDisturb.noDisturb = 1;
+        noDisturb.startTime = "23:00";
+        noDisturb.endTime = "05:00";
+        MokoSupport.getInstance().sendOrder(new ZWriteNoDisturbTask(this, noDisturb));
+    }
+    public void getNoDisturb(){
+        MokoSupport.getInstance().sendOrder(new ZReadNoDisturbTask(this));
+
+    }
     public void getLatestHeartRate(){
         Calendar calendar = Utils.strDate2Calendar("2018-09-18 00:00", AppConstants.PATTERN_YYYY_MM_DD_HH_MM);
         MokoSupport.getInstance().sendOrder(new ZReadHeartRateTask(this, calendar));
@@ -358,6 +394,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         deviceMap.put(device.address, device);
         try{
             scanState.put("ifitdevaddr", device.address);
+            // scanAndConnectState.put("deviceaddress",device.address);
         } catch (JSONException e) {
         }
 
@@ -449,6 +486,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 
     public void  parseResponse(OrderTaskResponse response){
+      
         OrderEnum orderEnum = response.order;
 
         LogModule.i("PARSE RESPONSE : " + orderEnum);
@@ -476,6 +514,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                         orderResult.put("alarm type",bandAlarm.type);
                     } catch (JSONException e){
                     }
+
                     LogModule.i(bandAlarm.toString());
                 }
                 break;
@@ -528,6 +567,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                 if (lastestSteps == null || lastestSteps.isEmpty()) {
                     return;
                 }
+                int i= 0;
                 for (DailyStep step : lastestSteps) {
                     try {
                         orderResult.put("steps", step.count);
@@ -537,8 +577,69 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
                     } catch (JSONException e) {
                     }
+                    User user =new User();
+                    user.setId(i+1);
+                    user.setSteps(Integer.valueOf(step.count));
+
+                    this.database.myDao().addUser(user);
+
+                    LogModule.i("Data inserted successfully in DataBase");
+
+
                     LogModule.i("MokoService >> " + step.toString());
                 }
+
+                
+
+                // // Persist your data in a transaction RealmDB
+                // // realm.beginTransaction();
+                // // realm.commitTransaction();
+
+
+               
+                //     // RealmDB
+                //     // Initialize Realm (just once per application)
+                //     Realm.init(this);
+
+                //     RealmConfiguration config = new RealmConfiguration.Builder().name("aiotlabs.ifitpro").build();
+                //     Realm.setDefaultConfiguration(config);
+            
+                //     realm = Realm.getDefaultInstance(); // opens "aiotlabs.ifitpro"
+            
+
+                //     // All writes must be wrapped in a transaction to facilitate safe multi threading
+                //     realm.executeTransaction(r -> {
+                //         try{
+                //             // Add a person. 
+                //             // RealmObjects with primary keys created with `createObject()` must specify the primary key value as an argument.
+                //              Band band = r.createObject(Band.class,4); // Create managed objects directly
+                //             band.setName("sathish");
+                //             band.setSteps(orderResult.getInt("steps"));
+
+                //         } catch (JSONException e) {
+                //         }
+                //     });
+
+                //     // Find the first person (no query conditions) and read a field
+                //     final Band band = realm.where(Band.class).findFirst();
+                //     LogModule.i(band.getName() + ":" + band.getSteps());
+                       
+                //     LogModule.i("Updating Database");
+                //     realm.executeTransaction(r->{
+                        
+                //             band.setName("Siva");
+                //             LogModule.i(band.getName());
+                //             int dataCount = (int)(realm.where(Band.class).count());
+                //             LogModule.i("data count"+ dataCount);
+                        
+                //     });
+
+                //     realm.close();
+
+
+              
+
+
                 break;
             case Z_READ_SLEEP_GENERAL:
                 ArrayList<DailySleep> lastestSleeps = MokoSupport.getInstance().getDailySleeps();
@@ -581,6 +682,13 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                 LogModule.i("Dial:" + MokoSupport.getInstance().getDial());
                 break;
             case Z_READ_NODISTURB:
+                NoDisturb noDisturb = MokoSupport.getInstance().getNodisturb();
+                try{
+                    orderResult.put("noDisturb state",noDisturb.noDisturb);
+                    orderResult.put("noDisturb start",noDisturb.startTime);
+                    orderResult.put("noDisturb end",noDisturb.endTime);
+                }catch (JSONException e){
+                }
                 LogModule.i(MokoSupport.getInstance().getNodisturb().toString());
                 break;
             case Z_READ_PARAMS:
@@ -649,7 +757,6 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         // LogModule.i("创建MokoService...onCreate");
         MokoSupport.getInstance().init(this);
 
-        super.onCreate();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(MokoConstants.ACTION_CONN_STATUS_DISCONNECTED);
@@ -661,12 +768,20 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         filter.setPriority(200);
         registerReceiver(mReceiver, filter);
+
+        super.onCreate();
+
+        //Room
+        database =Room.databaseBuilder(this, MyDatabase.class, "userdb").build();
+
     }
 
     // @Override
     // public int onStartCommand(Intent intent, int flags, int startId) {
-    //     LogModule.i("启动MokoService...onStartCommand");
-    //     return super.onStartCommand(intent, flags, startId);
+    //     LogModule.i("启动MokoService...onStartCommand"); 
+
+    // return super.onStartCommand(intent, flags, startId);
+
     // }
 
     // private IBinder mBinder = new LocalBinder();
@@ -695,6 +810,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     //     LogModule.i("销毁MokoService...onDestroy");
     //     disConnectBle();
     //     MokoSupport.getInstance().setOpenReConnect(false);
+    //     // realm.close();
     //     super.onDestroy();
     // }
 
@@ -717,3 +833,6 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         }
     }
 }
+
+
+
