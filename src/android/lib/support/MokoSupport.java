@@ -357,9 +357,6 @@ public class MokoSupport implements MokoResponseCallback {
 
 
 
-
-                    LogModule.i("MOKOSUPPORT : USERID : " + userData.getId() + "STEPS : " + userData.getSteps());
-
                     if (myRoomDB != null) {
 
                     }
