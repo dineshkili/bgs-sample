@@ -67,8 +67,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 
     private String serviceAction = "init";
-    JSONObject scanState = new JSONObject();
-    // JSONObject scanAndConnectState =new JSONObject();    
+    JSONObject scanState = new JSONObject();    
     JSONObject connectionState = new JSONObject();
     JSONObject orderResult = new JSONObject();
 
@@ -720,6 +719,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         // LogModule.i("创建MokoService...onCreate");
         MokoSupport.getInstance().init(this);
 
+        super.onCreate();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(MokoConstants.ACTION_CONN_STATUS_DISCONNECTED);
@@ -747,7 +747,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
     // @Override
     // public int onStartCommand(Intent intent, int flags, int startId) {
-    //     LogModule.i("启动MokoService...onStartCommand"); 
+    //     LogModule.i("启动MokoService...onStartCommand");
 
     // return super.onStartCommand(intent, flags, startId);
 
