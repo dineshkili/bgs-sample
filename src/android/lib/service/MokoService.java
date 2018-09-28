@@ -1,57 +1,38 @@
 package com.aiotlabs.ifitpro.plugin.bluetooth;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.Calendar;
-
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.omg.CORBA.PRIVATE_MEMBER;
-
-import android.util.Log;
-
-import com.red_folder.phonegap.plugin.backgroundservice.BackgroundService;
-
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.os.Message;
+import android.arch.persistence.room.Room;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.bluetooth.BluetoothAdapter;
-import android.os.RemoteException;
+import android.os.Binder;
+import android.os.Message;
+import android.util.Log;
 
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+import com.red_folder.phonegap.plugin.backgroundservice.BackgroundService;
 
-import com.aiotlabs.ifitpro.plugin.bluetooth.AppConstants;
-import com.aiotlabs.ifitpro.plugin.bluetooth.AutoLighten;
-import com.aiotlabs.ifitpro.plugin.bluetooth.BandAlarm;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConstants;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoSupport;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConnStateCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.OrderTaskResponse;
-import com.aiotlabs.ifitpro.plugin.bluetooth.SitAlert;
-import com.aiotlabs.ifitpro.plugin.bluetooth.BaseMessageHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.DailySleep;
-import com.aiotlabs.ifitpro.plugin.bluetooth.HeartRate;
-import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class MokoService extends BackgroundService implements MokoScanDeviceCallback, MokoConnStateCallback, MokoOrderTaskCallback {
-    
+
 
     private final String DEVICE_CMDS = "DEVICE_CMDS";
     private final String SCAN = "SCAN";
     private final String CONNECT = "CONNECT";
+    // private final String SCANANDCONNECT = "SCANANDCONNECT";
     private final String STEPS = "STEPS";
     private final String SLEEPS = "SLEEPS";
     private final String SETALARM ="SETALARM";
@@ -66,83 +47,114 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     private final String GETSTEPTARGET = "GETSTEPTARGET";
     private final String GETLATESTHEARTRATE = "GETLATESTHEARTRATE";
     private final String STEPCHANGELISTENER = "STEPCHANGELISTENER";
+    private final String SETNODISTURB = "SETNODISTURB";
+    private final String GETNODISTURB = "GETNODISTURB";
 
+    private Socket mSocket;
+    {
+        try {
+            mSocket = IO.socket("http://192.168.0.101:8080");
+        } catch (URISyntaxException e) {}
+    }
 
     private final static String TAG = MokoService.class.getSimpleName();
 
     private HashMap<String, BleDevice> deviceMap;
 
-    
+
+    //Room variables
+    public static MyDatabase database;
+
+
     private String serviceAction = "init";
-    JSONObject scanState = new JSONObject();    
+    JSONObject scanState = new JSONObject();
+    // JSONObject scanAndConnectState =new JSONObject();    
     JSONObject connectionState = new JSONObject();
     JSONObject orderResult = new JSONObject();
 
-
-
-    /* ********************************************************************************** 
+    public static int timerCount = 0;
+    /* **********************************************************************************
      * Background Service Segment (Redfolder Plugin)
      * ***********************************************************************************/
 
-	@Override
-	protected JSONObject doWork() {
-        
-        // try {
-			
-		// 	scanState.put("Message", msg);
+    @Override
+    protected JSONObject doWork() {
 
-		// 	Log.d(TAG, msg);
-		// } catch (JSONException e) {
-		// }
-		
+        // try {
+
+        // 	scanState.put("Message", msg);
+
+        // 	Log.d(TAG, msg);
+        // } catch (JSONException e) {
+        // }
+
         // return result;	
-        
-		JSONObject result = new JSONObject();
-		
-		try {
-			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"); 
-            String now = df.format(new Date(System.currentTimeMillis())); 
-            
+
+        JSONObject result = new JSONObject();
+
+        timerCount++;
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String now = df.format(new Date(System.currentTimeMillis()));
+
             result.put("action", this.serviceAction);
             result.put("time", now);
+            result.put("timerCount", timerCount);
 
             Log.d(TAG, this.serviceAction);
 
-		} catch (JSONException e) {
-		}
-		
-		return orderResult;	
-	}
 
-	@Override
-	protected JSONObject getConfig() {
-		JSONObject result = new JSONObject();
-		
-		try {
+
+            List<User> dbUserList = this.database.myDao().getAllUsers();
+            Log.d(TAG,"USER LIST from ROOM");
+
+            for(User userData: dbUserList){
+                Log.d(TAG,"USERID : " + userData.getId() + "STEPS : " + userData.getSteps());
+                result.put("userData", userData.toString());
+
+                mSocket.emit("message", userData.toString());
+            }
+        } catch (JSONException e) {
+        }
+
+
+        return result;
+    }
+
+    @Override
+    protected JSONObject getConfig() {
+        JSONObject result = new JSONObject();
+
+        try {
             result.put("serviceAction", this.serviceAction);
             result.put("scanResult", this.scanState);
             result.put("connectionResult", this.connectionState);
             result.put("orderResult", this.orderResult);
-            
-		} catch (JSONException e) {
-		}
-		
-		return result;
-	}
 
-	@Override
-	protected void setConfig(JSONObject config) {
+        } catch (JSONException e) {
+        }
+
+
+
+        return result;
+    }
+
+    @Override
+    protected void setConfig(JSONObject config) {
         try {
-			if (config.has(DEVICE_CMDS)){
+            if (config.has(DEVICE_CMDS)){
                 this.serviceAction = config.getString(DEVICE_CMDS);
                 LogModule.i(config.getString(DEVICE_CMDS));
-                
+
                 if (this.serviceAction.equals(SCAN)){
                     searchDevices();
                 }
                 if (this.serviceAction.equals(CONNECT)){
                     connectBluetoothDevice(scanState.getString("ifitdevaddr"));
                 }
+                // if(this.serviceAction.equals(SCANANDCONNECT)){
+                //     searchAndConnectDevices();
+                // }
                 if(this.serviceAction.equals(SETALARM)){
                     setAllAlarm();
                 }
@@ -179,47 +191,53 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                 if(this.serviceAction.equals(SLEEPS)){
                     getLatestSleeps();
                 }
+                if(this.serviceAction.equals(SETNODISTURB)){
+                    setNoDisturb();
+                }
+                if(this.serviceAction.equals(GETNODISTURB)){
+                    getNoDisturb();
+                }
                 if(this.serviceAction.equals(GETLATESTHEARTRATE)){
                     getLatestHeartRate();
                 }
                 if(this.serviceAction.equals(STEPCHANGELISTENER)){
                     openStepChangeListener();
                 }
-                
+
             }
-		} catch (JSONException e) {
+        } catch (JSONException e) {
 
-		}
-		
-	}     
+        }
 
-	@Override
-	protected JSONObject initialiseLatestResult() {
-		deviceMap = new HashMap<>();    
-		return null;
-	}
-
-	@Override
-	protected void onTimerEnabled() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void onTimerDisabled() {
-		// TODO Auto-generated method stub
-		
     }
-    
+
+    @Override
+    protected JSONObject initialiseLatestResult() {
+        deviceMap = new HashMap<>();
+        return null;
+    }
+
+    @Override
+    protected void onTimerEnabled() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void onTimerDisabled() {
+        // TODO Auto-generated method stub
+
+    }
 
 
 
 
 
 
-    
 
-    /* ********************************************************************************** 
+
+
+    /* **********************************************************************************
      * BLUETOOT CONNECTION related
      * ***********************************************************************************/
 
@@ -234,6 +252,13 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         MokoSupport.getInstance().connDevice(this, address, this);
     }
 
+    // public void searchAndConnectDevices(){
+    //     MokoSupport.getInstance().startScanDevice(this);
+    //     try{
+    //         MokoSupport.getInstance().connDevice(this, scanState.getString("deviceaddress"), this);
+    //     }catch( JSONException e){}
+    // }
+
     public void disConnectBle() {
         MokoSupport.getInstance().setReconnectCount(0);
         MokoSupport.getInstance().disConnectBle();
@@ -245,7 +270,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 
 
-     /* ********************************************************************************** 
+    /* **********************************************************************************
      * BLUETOOT DATA related
      * ***********************************************************************************/
     public void setAllAlarm(){
@@ -268,7 +293,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         alarms.add(drinkalarm1);
         alarms.add(drinkalarm2);
         alarms.add(drinkalarm3);
-        
+
         MokoSupport.getInstance().sendOrder(new ZWriteAlarmsTask(this,alarms));
 
     }
@@ -327,7 +352,18 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         Calendar calendar = Utils.strDate2Calendar("2018-09-18 00:00", AppConstants.PATTERN_YYYY_MM_DD_HH_MM);
         MokoSupport.getInstance().sendOrder(new ZReadSleepGeneralTask(this, calendar));
     }
-    
+
+    public void setNoDisturb(){
+        NoDisturb noDisturb = new NoDisturb();
+        noDisturb.noDisturb = 1;
+        noDisturb.startTime = "23:00";
+        noDisturb.endTime = "05:00";
+        MokoSupport.getInstance().sendOrder(new ZWriteNoDisturbTask(this, noDisturb));
+    }
+    public void getNoDisturb(){
+        MokoSupport.getInstance().sendOrder(new ZReadNoDisturbTask(this));
+
+    }
     public void getLatestHeartRate(){
         Calendar calendar = Utils.strDate2Calendar("2018-09-18 00:00", AppConstants.PATTERN_YYYY_MM_DD_HH_MM);
         MokoSupport.getInstance().sendOrder(new ZReadHeartRateTask(this, calendar));
@@ -339,7 +375,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 
 
-    /* ********************************************************************************** 
+    /* **********************************************************************************
      * Scan Device Segment
      * ***********************************************************************************/
 
@@ -358,6 +394,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         deviceMap.put(device.address, device);
         try{
             scanState.put("ifitdevaddr", device.address);
+            // scanAndConnectState.put("deviceaddress",device.address);
         } catch (JSONException e) {
         }
 
@@ -379,17 +416,17 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 
 
-    /* ********************************************************************************** 
+    /* **********************************************************************************
      * MokoService Segment
      * ***********************************************************************************/
 
     /* >> Interface Implmentation: MokoConnStateCallback */
-    
+
     @Override
     public void onConnectSuccess() {
         try{
             connectionState.put("state", MokoConstants.ACTION_DISCOVER_SUCCESS);
-        } catch (JSONException e){    
+        } catch (JSONException e){
         }
         // Intent intent = new Intent(MokoConstants.ACTION_DISCOVER_SUCCESS);
         // sendOrderedBroadcast(intent, null);
@@ -412,7 +449,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
             connectionState.put("AppConstants.EXTRA_CONN_COUNT", reConnCount);
         } catch (JSONException e){
         }
-        
+
         // Intent intent = new Intent(MokoConstants.ACTION_DISCOVER_TIMEOUT);
         // intent.putExtra(AppConstants.EXTRA_CONN_COUNT, reConnCount);
         // sendBroadcast(intent);
@@ -443,12 +480,13 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         // sendBroadcast(new Intent(MokoConstants.ACTION_ORDER_FINISH));
     }
 
-    
+
 
 
 
 
     public void  parseResponse(OrderTaskResponse response){
+
         OrderEnum orderEnum = response.order;
 
         LogModule.i("PARSE RESPONSE : " + orderEnum);
@@ -476,6 +514,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                         orderResult.put("alarm type",bandAlarm.type);
                     } catch (JSONException e){
                     }
+
                     LogModule.i(bandAlarm.toString());
                 }
                 break;
@@ -493,7 +532,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                     orderResult.put("auto lighten status",autoLighten.autoLighten);
                     orderResult.put("auto lighten starting time",autoLighten.startTime);
                     orderResult.put("auto lighten ending time",autoLighten.endTime);
-                } catch (JSONException e){    
+                } catch (JSONException e){
                 }
                 LogModule.i(autoLighten.toString());
                 break;
@@ -503,7 +542,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                     orderResult.put("set sit alert",sitAlert.alertSwitch);
                     orderResult.put("sit alert start time ", sitAlert.startTime);
                     orderResult.put("sit alert end time",sitAlert.endTime);
-                } catch (JSONException e){    
+                } catch (JSONException e){
                 }
                 LogModule.i(sitAlert.toString());
                 break;
@@ -528,6 +567,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                 if (lastestSteps == null || lastestSteps.isEmpty()) {
                     return;
                 }
+                int i= 0;
                 for (DailyStep step : lastestSteps) {
                     try {
                         orderResult.put("steps", step.count);
@@ -537,9 +577,20 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
                     } catch (JSONException e) {
                     }
+
                     LogModule.i("MokoService >> " + step.toString());
+
+
+                    User user =new User();
+                    // user.setId(i+1);
+                    user.setSteps(Integer.valueOf(step.count));
+
+                    this.database.myDao().addUser(user);
+                    LogModule.i("Data inserted successfully in DataBase");
+
                 }
                 break;
+
             case Z_READ_SLEEP_GENERAL:
                 ArrayList<DailySleep> lastestSleeps = MokoSupport.getInstance().getDailySleeps();
                 if (lastestSleeps == null || lastestSleeps.isEmpty()) {
@@ -550,11 +601,12 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                         orderResult.put("awake hours",sleep.awakeDuration);
                         orderResult.put("sleep hours",sleep.deepDuration);
                         orderResult.put("wake time",sleep.endTime);
-                    } catch (JSONException e) { 
+                    } catch (JSONException e) {
                     };
                     LogModule.i(sleep.toString());
                 }
                 break;
+
             case Z_READ_HEART_RATE:
                 ArrayList<HeartRate> lastestHeartRate = MokoSupport.getInstance().getHeartRates();
                 if (lastestHeartRate == null || lastestHeartRate.isEmpty()) {
@@ -581,6 +633,13 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                 LogModule.i("Dial:" + MokoSupport.getInstance().getDial());
                 break;
             case Z_READ_NODISTURB:
+                NoDisturb noDisturb = MokoSupport.getInstance().getNodisturb();
+                try{
+                    orderResult.put("noDisturb state",noDisturb.noDisturb);
+                    orderResult.put("noDisturb start",noDisturb.startTime);
+                    orderResult.put("noDisturb end",noDisturb.endTime);
+                }catch (JSONException e){
+                }
                 LogModule.i(MokoSupport.getInstance().getNodisturb().toString());
                 break;
             case Z_READ_PARAMS:
@@ -599,13 +658,15 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 
 
-    
+
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null) {
                 String action = intent.getAction();
+
                 if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
                     OrderEnum orderEnum = (OrderEnum) intent.getSerializableExtra(MokoConstants.EXTRA_KEY_CURRENT_DATA_TYPE);
                     switch (orderEnum) {
@@ -613,21 +674,31 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
                             DailyStep dailyStep = MokoSupport.getInstance().getDailyStep();
                             LogModule.i(dailyStep.toString());
 
-                            // Now call the listeners
-                            Log.i(TAG, "Sending to all listeners");
-                            for (int i = 0; i < mListeners.size(); i++)
-                            {
-                                try {
-                                    mListeners.get(i).handleUpdate();
-                                    Log.i(TAG, "Sent listener - " + i);
-                                } catch (RemoteException e) {
-                                    Log.i(TAG, "Failed to send to listener - " + i + " - " + e.getMessage());
-                                }
+
+                            // runOnce();
+
+                            JSONObject tmp = new JSONObject();
+                            try{
+                                tmp.put("userData",dailyStep.toString());
+                            } catch (JSONException e){
                             }
+                            sendUpdate(tmp);
+
+                            // // Now call the listeners
+                            // Log.i(TAG, "Sending to all listeners");
+                            // for (int i = 0; i < mListeners.size(); i++)
+                            // {
+                            //     try {
+                            //         mListeners.get(i).handleUpdate();
+                            //         Log.i(TAG, "Sent listener - " + i);
+                            //     } catch (RemoteException e) {
+                            //         Log.i(TAG, "Failed to send to listener - " + i + " - " + e.getMessage());
+                            //     }
+                            // }
                             break;
                     }
                 }
-    
+
             }
 
         }
@@ -649,7 +720,6 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         // LogModule.i("创建MokoService...onCreate");
         MokoSupport.getInstance().init(this);
 
-        super.onCreate();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(MokoConstants.ACTION_CONN_STATUS_DISCONNECTED);
@@ -661,12 +731,26 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         filter.setPriority(200);
         registerReceiver(mReceiver, filter);
+
+
+
+        //Room
+
+        database = Room.databaseBuilder(this, MyDatabase.class, "userdb").build();
+
+        mSocket.connect();
+
+
+        super.onCreate();
+
     }
 
     // @Override
     // public int onStartCommand(Intent intent, int flags, int startId) {
-    //     LogModule.i("启动MokoService...onStartCommand");
-    //     return super.onStartCommand(intent, flags, startId);
+    //     LogModule.i("启动MokoService...onStartCommand"); 
+
+    // return super.onStartCommand(intent, flags, startId);
+
     // }
 
     // private IBinder mBinder = new LocalBinder();
@@ -690,13 +774,14 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     //     return super.onUnbind(intent);
     // }
 
-    // @Override
-    // public void onDestroy() {
-    //     LogModule.i("销毁MokoService...onDestroy");
-    //     disConnectBle();
-    //     MokoSupport.getInstance().setOpenReConnect(false);
-    //     super.onDestroy();
-    // }
+    @Override
+    public void onDestroy() {
+        LogModule.i("销毁MokoService...onDestroy");
+        disConnectBle();
+        MokoSupport.getInstance().setOpenReConnect(false);
+
+        super.onDestroy();
+    }
 
     public class LocalBinder extends Binder {
         public MokoService getService() {
@@ -717,3 +802,6 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
         }
     }
 }
+
+
+

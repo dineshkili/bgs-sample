@@ -19,7 +19,7 @@
     <keywords>cordova,background</keywords>
 
 	<!-- Load in the core background service -->
-	<dependency id="com.red_folder.phonegap.plugin.backgroundservice" url="https://github.com/dineshkili/bgs-core.git"/>
+	<dependency id="com.red_folder.phonegap.plugin.backgroundservice" url="/Users/dhineshsornakili/aiots/workspace/teamwork/bgs-core"/>
 
     <!-- android -->
     <platform name="android">
@@ -156,6 +156,12 @@
         <source-file src="src/android/lib/support/utils/MokoUtils.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/support/MokoConstants.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth" />
         <source-file src="src/android/lib/support/MokoSupport.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
+        
+        <!-- Room Database source files. -->
+
+        <source-file src="src/android/lib/RoomDatabase/MyDao.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
+        <source-file src="src/android/lib/RoomDatabase/MyDatabase.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
+        <source-file src="src/android/lib/RoomDatabase/User.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
 
     </platform>
 	

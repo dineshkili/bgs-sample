@@ -1,5 +1,6 @@
 package com.aiotlabs.ifitpro.plugin.bluetooth;
 
+import android.arch.persistence.room.Room;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -13,38 +14,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.ParcelUuid;
 import android.text.TextUtils;
-
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConnStateCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoOrderTaskCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoResponseCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoScanDeviceCallback;
-import com.aiotlabs.ifitpro.plugin.bluetooth.AutoLighten;
-import com.aiotlabs.ifitpro.plugin.bluetooth.BandAlarm;
-import com.aiotlabs.ifitpro.plugin.bluetooth.BleDevice;
-import com.aiotlabs.ifitpro.plugin.bluetooth.CustomScreen;
-import com.aiotlabs.ifitpro.plugin.bluetooth.DailySleep;
-import com.aiotlabs.ifitpro.plugin.bluetooth.DailyStep;
-import com.aiotlabs.ifitpro.plugin.bluetooth.DeviceTypeEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.FirmwareEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.FirmwareParams;
-import com.aiotlabs.ifitpro.plugin.bluetooth.HeartRate;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoCharacteristic;
-import com.aiotlabs.ifitpro.plugin.bluetooth.NoDisturb;
-import com.aiotlabs.ifitpro.plugin.bluetooth.OrderEnum;
-import com.aiotlabs.ifitpro.plugin.bluetooth.OrderType;
-import com.aiotlabs.ifitpro.plugin.bluetooth.SitAlert;
-import com.aiotlabs.ifitpro.plugin.bluetooth.UserInfo;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoCharacteristicHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoConnStateHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.MokoLeScanHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.LogModule;
-import com.aiotlabs.ifitpro.plugin.bluetooth.OpenNotifyTask;
-import com.aiotlabs.ifitpro.plugin.bluetooth.OrderTask;
-import com.aiotlabs.ifitpro.plugin.bluetooth.ZReadSleepGeneralTask;
-import com.aiotlabs.ifitpro.plugin.bluetooth.BaseHandler;
-import com.aiotlabs.ifitpro.plugin.bluetooth.BleConnectionCompat;
-import com.aiotlabs.ifitpro.plugin.bluetooth.ComplexDataParse;
-import com.aiotlabs.ifitpro.plugin.bluetooth.DigitalConver;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -366,8 +335,13 @@ public class MokoSupport implements MokoResponseCallback {
     //
     ///////////////////////////////////////////////////////////////////////////
 
+
+    public MyDatabase myRoomDB = null;
+
     @Override
     public void onCharacteristicChanged(BluetoothGattCharacteristic characteristic, byte[] value) {
+
+
         if (!isSyncData()) {
             OrderType orderType = null;
             if (characteristic.getUuid().toString().equals(OrderType.STEP_CHARACTER.getUuid())) {
@@ -380,6 +354,27 @@ public class MokoSupport implements MokoResponseCallback {
                     setDailyStep(dailyStep);
                     Intent intent = new Intent(MokoConstants.ACTION_CURRENT_DATA);
                     intent.putExtra(MokoConstants.EXTRA_KEY_CURRENT_DATA_TYPE, OrderEnum.Z_STEPS_CHANGES_LISTENER);
+
+
+
+
+                    LogModule.i("MOKOSUPPORT : USERID : " + userData.getId() + "STEPS : " + userData.getSteps());
+
+                    if (myRoomDB != null) {
+
+                    }
+                    else {
+                        myRoomDB = Room.databaseBuilder(mContext, MyDatabase.class, "userdb").build();
+                    }
+                    User user = new User();
+                    // user.setId(i+1);
+                    user.setSteps(Integer.valueOf(dailyStep.count));
+
+                    myRoomDB.myDao().addUser(user);
+                    LogModule.i("Data inserted successfully in DataBase");
+
+
+
                     mContext.sendBroadcast(intent);
                 }
             }
