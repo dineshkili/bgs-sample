@@ -1,6 +1,6 @@
 package com.aiotlabs.ifitpro.plugin.bluetooth;
 
-import android.arch.persistence.room.Room;
+// import android.arch.persistence.room.Room;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,12 +10,14 @@ import android.os.Binder;
 import android.os.Message;
 import android.util.Log;
 
+import com.aiotlabs.ifitpro.plugin.database.DatabaseAdapter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.red_folder.phonegap.plugin.backgroundservice.BackgroundService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
@@ -25,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.aiotlabs.ifitpro.plugin.database.DatabaseAdapter;
 
 public class MokoService extends BackgroundService implements MokoScanDeviceCallback, MokoConnStateCallback, MokoOrderTaskCallback {
 
@@ -50,6 +53,8 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
     private final String SETNODISTURB = "SETNODISTURB";
     private final String GETNODISTURB = "GETNODISTURB";
 
+    DatabaseAdapter databaseAdapter = new DatabaseAdapter(this);
+    
     private Socket mSocket;
     {
         try {
@@ -63,7 +68,7 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 
     //Room variables
-    public static MyDatabase database;
+    // public static MyDatabase database;
 
 
     private String serviceAction = "init";
@@ -104,15 +109,15 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
 
 
-            List<User> dbUserList = this.database.myDao().getAllUsers();
-            Log.d(TAG,"USER LIST from ROOM");
+            // List<User> dbUserList = this.database.myDao().getAllUsers();
+            // Log.d(TAG,"USER LIST from ROOM");
 
-            for(User userData: dbUserList){
-                Log.d(TAG,"USERID : " + userData.getId() + "STEPS : " + userData.getSteps());
-                result.put("userData", userData.toString());
+            // for(User userData: dbUserList){
+            //     Log.d(TAG,"USERID : " + userData.getId() + "STEPS : " + userData.getSteps());
+            //     result.put("userData", userData.toString());
 
-                mSocket.emit("message", userData.toString());
-            }
+            //     mSocket.emit("message", userData.toString());
+            // }
         } catch (JSONException e) {
         }
 
@@ -579,13 +584,17 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
                     LogModule.i("MokoService >> " + step.toString());
 
+                    databaseAdapter.addUser(Integer.valueOf(step.count));
 
-                    User user =new User();
-                    // user.setId(i+1);
-                    user.setSteps(Integer.valueOf(step.count));
+                    JSONArray result = new JSONArray();
+                    result = databaseAdapter.findAllUsers();
+                    System.out.println(result.toString());
+                    // User user =new User();
+                    // // user.setId(i+1);
+                    // user.setSteps(Integer.valueOf(step.count));
 
-                    this.database.myDao().addUser(user);
-                    LogModule.i("Data inserted successfully in DataBase");
+                    // this.database.myDao().addUser(user);
+                    // LogModule.i("Data inserted successfully in DataBase");
 
                 }
                 break;
@@ -736,7 +745,9 @@ public class MokoService extends BackgroundService implements MokoScanDeviceCall
 
         //Room
 
-        database = Room.databaseBuilder(this, MyDatabase.class, "userdb").build();
+        // database = Room.databaseBuilder(this, MyDatabase.class, "userdb").build();
+
+        databaseAdapter.connection();
 
         mSocket.connect();
 

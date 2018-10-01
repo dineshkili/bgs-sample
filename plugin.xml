@@ -19,7 +19,7 @@
     <keywords>cordova,background</keywords>
 
 	<!-- Load in the core background service -->
-	<dependency id="com.red_folder.phonegap.plugin.backgroundservice" url="/Users/dhineshsornakili/aiots/workspace/teamwork/bgs-core"/>
+	<dependency id="com.red_folder.phonegap.plugin.backgroundservice" url="C:\Users\sathishkumars\aiotlabs\workspace\PROJECT\project-new\bgs-core"/>
 
     <!-- android -->
     <platform name="android">
@@ -159,9 +159,9 @@
         
         <!-- Room Database source files. -->
 
-        <source-file src="src/android/lib/RoomDatabase/MyDao.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
+        <!-- <source-file src="src/android/lib/RoomDatabase/MyDao.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
         <source-file src="src/android/lib/RoomDatabase/MyDatabase.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
-        <source-file src="src/android/lib/RoomDatabase/User.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/>
+        <source-file src="src/android/lib/RoomDatabase/User.java" target-dir="src/com/aiotlabs/ifitpro/plugin/bluetooth"/> -->
 
     </platform>
 	

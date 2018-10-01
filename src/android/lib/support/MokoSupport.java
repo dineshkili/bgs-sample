@@ -1,6 +1,6 @@
 package com.aiotlabs.ifitpro.plugin.bluetooth;
 
-import android.arch.persistence.room.Room;
+// import android.arch.persistence.room.Room;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -336,7 +336,7 @@ public class MokoSupport implements MokoResponseCallback {
     ///////////////////////////////////////////////////////////////////////////
 
 
-    public MyDatabase myRoomDB = null;
+    // public MyDatabase myRoomDB = null;
 
     @Override
     public void onCharacteristicChanged(BluetoothGattCharacteristic characteristic, byte[] value) {
@@ -358,20 +358,20 @@ public class MokoSupport implements MokoResponseCallback {
 
 
 
-                    LogModule.i("MOKOSUPPORT : USERID : " + userData.getId() + "STEPS : " + userData.getSteps());
+                    // LogModule.i("MOKOSUPPORT : USERID : " + userData.getId() + "STEPS : " + userData.getSteps());
 
-                    if (myRoomDB != null) {
+                    // if (myRoomDB != null) {
 
-                    }
-                    else {
-                        myRoomDB = Room.databaseBuilder(mContext, MyDatabase.class, "userdb").build();
-                    }
-                    User user = new User();
-                    // user.setId(i+1);
-                    user.setSteps(Integer.valueOf(dailyStep.count));
+                    // }
+                    // else {
+                    //     myRoomDB = Room.databaseBuilder(mContext, MyDatabase.class, "userdb").build();
+                    // }
+                    // User user = new User();
+                    // // user.setId(i+1);
+                    // user.setSteps(Integer.valueOf(dailyStep.count));
 
-                    myRoomDB.myDao().addUser(user);
-                    LogModule.i("Data inserted successfully in DataBase");
+                    // myRoomDB.myDao().addUser(user);
+                    // LogModule.i("Data inserted successfully in DataBase");
 
 
 
